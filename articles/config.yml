@@ -17,13 +17,13 @@ review_version: 5.9
 # inherit: ["A.yml", "B.yml"]
 
 # ブック名(ファイル名になるもの。ASCII範囲の文字を使用)
-bookname: everyday-cabbage
+bookname: data-garden
 # 記述言語。省略した場合はja
 language: ja
 
 # 書名
-booktitle: {name: "自宅水耕栽培で毎日サラダ生活 キャベツ編", file-as: "ジタクスイコウサイバイデマイニチサラダ"}
-subtitle: {name: "室内でキャベツを栽培する冴えた方法", file-as: "シツナイデキャベツヲサイバイスルサエタホウホウ"}
+booktitle: {name: "データ菜園入門 Arduino × Raspberry Piでつくるデータ駆動家庭菜園", file-as: "データサイエンニュウモン"}
+subtitle: {name: "コードとデータで植物を育てよう", file-as: "コードとデータデショクブツヲソダテヨウ"}
 # 著者名。「, 」で区切って複数指定できる
 aut: [{name: "Mutsumix", file-as: "ムツミックス"}]
 
