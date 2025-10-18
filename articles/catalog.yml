@@ -3,29 +3,30 @@ PREDEF:
  - 00_introduction.re
 
 CHAPS:
-# 水耕栽培生活の紹介（完了）
-- hydroponic_life.re
+# 簡単な監視を始めよう
+- start.re
 
-# 装置について（あとは写真）
-- device.re
+# ダッシュボードを作ってみよう
+- dashboard.re
 
-# 種植えから収穫までの流れ（完了）
+# タイムラプス動画を撮影しよう
 - cultivation.re
 
-# センサーで監視プログラム作成（完了）
+# センサーを使ってモニタリングしよう
 - sensor.re
+
+# 装置を作ってみよう
 
 # レシピ（完了）
 - recipe.re
 
 # その他
-## ランニングコストの話、便利グッズなど（完了）
 - other.re
 
 # 4コマ漫画
 - 4koma.re
 
-# 今後の展望（完了）
+# さらに高度な監視の紹介
 - future.re
 
 POSTDEF:
@@ -33,6 +34,11 @@ POSTDEF:
  - 99_postscript.re
 
 # 気になること
+
+
+# docker run --rm -v $(pwd)/articles:/work vvakame/review:5.9 /bin/sh -c "cd /work && rake pdf"
+
+# 前回（tbh18）のメモ
 # 全角半角の数字
 
 # 残りの時間を見積もってみる(5/3)
@@ -51,5 +57,3 @@ POSTDEF:
 # 5/17　 sensor完了。次は装置関係の写真を撮らなければいけない
 # 5/18 装置関係の写真を撮影。原稿と関係ないけど、出品情報を編集して審査に提出
 # 5/23 大体書き終わった ４コマ書くって言っちゃった。どうしよう
-
-# docker run --rm -v $(pwd)/articles:/work vvakame/review:5.9 /bin/sh -c "cd /work && rake pdf"
