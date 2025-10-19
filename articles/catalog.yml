@@ -9,13 +9,14 @@ CHAPS:
 # ダッシュボードを作ってみよう
 - dashboard.re
 
-# タイムラプス動画を撮影しよう
-- cultivation.re
+# 定点カメラで自動撮影しよう
+- camera.re
 
 # センサーを使ってモニタリングしよう
 - sensor.re
 
 # 装置を作ってみよう
+- device.re
 
 # レシピ（完了）
 - recipe.re
@@ -37,6 +38,14 @@ POSTDEF:
 
 
 # docker run --rm -v $(pwd)/articles:/work vvakame/review:5.9 /bin/sh -c "cd /work && rake pdf"
+
+# ★技術・機器一覧
+# 言語：Python
+# 使用サービス：AWS、GCP、ThingSpeak、Grafana
+# 使用機器：
+# SwitchBot 温湿度計、SwitchBot ハブ、ネットワークカメラ
+# USB接続のWebカメラ
+# ラズベリーパイ、Seeeduino（Arduino互換機）、各種センサー
 
 # 前回（tbh18）のメモ
 # 全角半角の数字
