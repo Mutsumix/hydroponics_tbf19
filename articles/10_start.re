@@ -3,43 +3,66 @@
 この章では手始めに簡単に購入できる機器を使った監視を紹介します。
 プログラミングは必要ありません。そもそもパソコンすら不要です。
 
+早速、購入品一式と設置方法を見ていきましょう。
+
 == 購入品一式
 
 //table[start_device][購入品一式]{
-品目	個数	購入先	目安の価格（単品）
+品目	個数	購入先	目安の価格
 ------------------
-SwitchBot CO2センサー（温湿度計）@<fn>{switchbot_co2_sensor} 
-SwitchBot 屋内カメラ
-SwitchBot ハブミニ@<fn>{switchbot_hub_mini}
-水温計@<fn>{water_temperature_sensor}
+電源タップ	1つ	Amazon	1,599円
+SwitchBot CO2センサー（温湿度計）@<fn>{switchbot_co2_sensor}	1つ	公式ネットショップ	¥7,980
+SwitchBot 屋内カメラ@<fn>{switchbot_indoor_camera}	1つ	公式ネットショップ	¥3,780
+SwitchBot ハブミニ@<fn>{switchbot_hub_mini}	1つ	公式ネットショップ	¥5,480
+水温計@<fn>{water_temperature_sensor}	2つ	Amazon	¥585
 //}
 
-=== 選定理由について
+//footnote[switchbot_co2_sensor][@<href>{https://www.switchbot.jp/products/switchbot-co2-meter} SwitchBot CO2センサー（温湿度計）]
+//footnote[switchbot_indoor_camera][@<href>{https://www.switchbot.jp/products/switchbot-indoor-cam} SwitchBot 屋内カメラ]
+//footnote[switchbot_hub_mini][@<href>{https://www.switchbot.jp/products/switchbot-hub-mini} SwitchBot ハブミニ]
+//footnote[water_temperature_sensor][@<href>{https://amzn.asia/d/3HV4weq} 水温計 購入できる最小単位が2個セットでした]
 
-これらを選んだ理由ですが、安さと調達の容易さと、API経由で制御ができる拡張性の高さです。
 
-紹介したSwitchBot の製品はどれも公式サイトやAmazonから購入ができます。
+=== SwitchBot製品の選定理由について
 
-カメラについては、同機能を持つ屋内用ネットワークカメラの中では比較的安い部類に入ります。
+SwitchBot製品を多く選んでいる理由ですが、安さと調達の容易さと、API経由で制御ができる拡張性の高さです。
 
-また、@<title>{10_dashboard} の章でTODO 後述しますが、
+==== 安さ
+まず屋内カメラについては、同機能を持つ屋内用ネットワークカメラの中では比較的安い部類に入ります。
 
-経験上、SwitchBotの製品は初期不良や故障もなくはないのですが、保証期間内であればしっかり対応が受けられます。なんか動きがおかしいな、と思ったらサポートに連絡することをお勧めします。
+==== 調達の容易さ
+紹介したSwitchBot の製品はどれも公式サイトやAmazonなどネット上で簡単に購入ができます。
+スマートホーム機器を取り揃えているメーカーのうち、SwithBotは有名どころでラインナップも豊富なため、ここで紹介した製品が長い期間にわたって調達が可能という点でオススメしています。
+
+==== 拡張性
+また、@<chap>{10_dashboard} @<title>{10_dashboard} の章で後述しますが、CO2センサー（温湿度計）はAPIを使って、プログラムからセンサーデータを取得できるので、様々な形でのデータ利活用が可能です。
+
+==== 注意点
+気をつけておきたいのが、経験上、SwitchBotの製品は初期不良や故障が割とあります。
+保証期間内であればしっかり対応が受けられます。なんか動きがおかしいな、と思ったらサポートに連絡することをお勧めします。
 
 === ハブについて
 
 ハブに関しては、温湿度計やスマートリモコン、あるいは照明と一体になった製品も販売されています。
 
-どの製品でも大丈夫なので、ご自宅に必要だと思ったハブ機能を持つ製品を選んでください。ハブに接続することで、遠隔で計測データの確認ができます。
+どの製品でも大丈夫なので、ご自宅に必要だと思ったハブ機能を持つ製品を選んでください。ハブに接続することで、遠隔で計測データの確認ができ、後の章で触れるAPI経由での制御も可能になります。
 
-//footnote[smart_plug][@<href>{https://amzn.asia/d/9CN109H} スマートプラグ]
-//footnote[switchbot_co2_sensor][@<href>{https://www.switchbot.jp/products/switchbot-co2-meter} SwitchBot CO2センサー（温湿度計）]
-//footnote[switchbot_hub_mini][@<href>{https://www.switchbot.jp/products/switchbot-hub-mini} SwitchBot ハブミニ]
-//footnote[water_temperature_sensor][@<href>{https://www.switchbot.jp/products/switchbot-water-temperature-meter} SwitchBot 水温計]
 
 == 設置
 
-各製品にケーブルを繋ぎ、SwtichBotのマニュアルに従って初期設定を行い、ハブに接続します。
+CO2センサー（温湿度計）、屋内カメラ、ハブミニのケーブルを電源に繋ぎます。
+SwtichBotのマニュアルに従ってネット接続の初期設定を行い、ハブに接続します。@<fn>{hub_connection}
 
-2025年10月現在の手順では、アプリ→温湿度計グラフページ下にある「データをクラウドに保存」ボタンを手動でタップする必要があります。そうすれば、ハブに接続できが可能になります。
+//footnote[hub_connection][2025年10月現在の手順では、アプリ→温湿度計グラフページ下にある「データをクラウドに保存」ボタンを手動でタップする必要があります。そうすれば、ハブに接続できが可能になります。]
 
+もし、水耕栽培を行っている場合は、水温計のセンサーの先端を水耕栽培用の水槽に浸します。温度表示の液晶がカメラの画角に収まるようにしましょう。
+
+簡単ですが以上です。
+
+TODO 画像
+
+SwitchBotのアプリ上から、温度・湿度・CO2濃度のグラフを確認でき、またカメラの映像から植物の様子や水温計に表示された温度もリアルタイムでわかります。
+
+ハブに接続していれば、外出先からでもリアルタイムのセンサやカメラの情報を得ることができます。
+
+次章から、プログラミングやクラウド環境の構築を行なって、徐々に発展的な監視を行なっていきます。
