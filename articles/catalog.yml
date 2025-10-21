@@ -2,40 +2,39 @@ PREDEF:
 # はじめに（完了）
  - 00_introduction.re
 
+# フローチャートを作りたい
+# 00_flowchart.re
+
 CHAPS:
 # 簡単な監視を始めよう
-- start.re
+- 10_start.re
 
 # ダッシュボードを作ってみよう
-- dashboard.re
+- 10_dashboard.re
 
 # 定点カメラで自動撮影しよう
-- camera.re
+- 10_camera.re
 
 # センサーを使ってモニタリングしよう
-- sensor.re
+- 10_sensor.re
 
 # 装置を作ってみよう
-- device.re
+- 10_device.re
 
-# レシピ（完了）
-- recipe.re
-
-# その他
-- other.re
+# # その他
+# - 10_other.re
 
 # 4コマ漫画
-- 4koma.re
+- 20_4koma.re
 
-# さらに高度な監視の紹介
-- future.re
+# さらに高度な監視の紹介など今後の展望
+- 30_future.re
 
 POSTDEF:
 # あとがき
  - 99_postscript.re
 
 # 気になること
-
 
 # docker run --rm -v $(pwd)/articles:/work vvakame/review:5.9 /bin/sh -c "cd /work && rake pdf"
 
