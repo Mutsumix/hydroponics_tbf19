@@ -1,67 +1,28 @@
 = ダッシュボードを作ってみよう
 
-植物の生育状況を把握するためには、まずどんな環境で植物が育っているかを正確に把握し、過去からの変化に注意を払う必要があります。
+先ほどの@<chap>{10_start} @<title>{10_start} の章では、SwtichBotの製品とアプリを使ったセンサーデータの確認を行いました。
 
-この章ではCO2センサーを用いた値の取得方法とモニタリングについて解説します。
+この章では、センサーデータをThingSpeakというクラウドサービスに保存し、Grafanaというツールを使って自分好みのダッシュボードを作成する方法について紹介します。
+
+自分好みのダッシュボードを作成する理由ですが、自分が知りたいデータを自分の知りたいレイアウトや表示する期間に設定することで、得られた数値を育成している植物の生育状況の把握がしやすくなる、ということが目的としてあります。
+
+それぞれのサービス・ツールは機能が豊富にあるのですが、この章では深掘りすることは避け、最低限のデータ連携を行うところまでを目的に説明していきます。
 
 まずは概要を説明します。
 
-用意する機器はSwitchBotから発売されているCO2センサーと、ハブミニです。CO2センサーはさまざまな製品が市場に出回っていますが、以下の理由からこの２つを選定しました。
+用意する機器は、@<chap>{10_start} @<title>{10_start} の章で紹介したSwitchBotのCO2センサーとハブミニです。追加で必要なものは特にありません。
 
- * 現時点で今後も安定的に調達できる見通しがある（レタス編で紹介したセンサーが販売中止になったことを受けて、この点は非常に重視しています）
- * 比較的安価である（安すぎると品質に疑問がつきますが、本書を手にする人には手軽に監視の楽しさと重要性に触れてほしいと思っています）
- * クラウドにデータを飛ばすことができる（自宅でしか監視できませんだと、日中家にいない人や育成環境が自宅にない人にとってあまり意味がありません）
- * データの飛ばし方が容易（レタス編で紹介したセンサーでは、値の取得のためにラズベリーパイを必要とし、さらにセンサーを認識させるためのコマンドの説明が必須で、プログラム初心者にはかなりハードルの高いものだったと反省しています）
+強いて言えば、これから説明する操作を実行するためのPCが必要です。WindowsでもMacでもLinuxでも、OSは問いません。
 
-センサーの値を取得するために作成するプログラムは、AWSというクラウドサービス上のLambdaというサービスを使って動かします。
+センサーの値を取得するために実行するPythonのプログラムは、AWSというクラウドベンダが提供しているLambdaというサービスを使って動かします。
 
-そして、取得した値を確認するために、Mackerel（マカレル）という日本のはてな社が提供しているサービスを利用します。
+そして、ThingSpeak（シングスピーク）というサービスにデータを保存し、Grafana（グラファナ）というサービスを利用して、見やすいダッシュボードを作成します。
 
 全体の構成図を以下に示します。
 
-//image[monitoring_overview.drawio][全体の構成図]
+#@# TODO//image[monitoring_overview.drawio][全体の構成図]
 
 それでは見ていきましょう。
-
-== 用意する機器
-
- * SwitchBot CO2センサー（温湿度計）@<fn>{switchbot_co2_sensor}
- * SwitchBot ハブミニ@<fn>{switchbot_hub_mini}
-
-//image[switchbot_co2_sensor][CO2センサー][scale=0.5]
-//image[switchbot_hub_mini][ハブミニ][scale=0.5]
-
-//footnote[switchbot_co2_sensor][@<href>{https://www.switchbot.jp/products/switchbot-co2-meter} SwitchBot CO2センサー（温湿度計）]
-//footnote[switchbot_hub_mini][@<href>{https://www.switchbot.jp/products/switchbot-hub-mini} SwitchBot ハブミニ（関連商品のハブ2, ハブ3でも可}]
-
-=== CO2センサーを使用するにあたっての初期設定
-
-センサーとハブミニの両方に電力を供給し、電源をつけます。
-SwitchBotの公式アプリを使用し、ハブミニにセンサーを認識させます（ハブミニはWi-Fiに接続させておく必要があります）。
-
-詳細な手順は、機器のバージョンによって変わるので、機器購入時のマニュアルやSwitchBotの公式サイトを参照してください。@<fn>{switchbot_manual}
-
-//footnote[switchbot_manual][@<href>{https://support.switch-bot.com/hc/ja/articles/20426539496727-%E6%B8%A9%E6%B9%BF%E5%BA%A6%E8%A8%88%E6%B8%A9%E6%B9%BF%E5%BA%A6%E3%83%87%E3%83%BC%E3%82%BF%E3%81%AE%E9%81%A0%E9%9A%94%E7%A2%BA%E8%AA%8D%E6%96%B9%E6%B3%95-%E3%83%8F%E3%83%96%E3%81%AB%E6%8E%A5%E7%B6%9A%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95} SwitchBot ハブミニ マニュアル]
-
-CO2センサーは単体でも使用することはできますが、連携させることで、家の外からのモニタリングが可能になります。
-
-SwitchBotの公式アプリ上でCO2濃度と温湿度などが確認できるので、この後紹介するLambdaとかMackerel難しい！って人はこれで終了でも大丈夫です。
-
-ではなぜ、このような外部サービスを使った監視を行うのか、その理由を説明します。
-
-==== 様々な形での通知が可能
- アプリが入っているスマホにプッシュ通知を送ることはできますが、自分以外にも通知をしたい、通知の手段としてメールやチャットサービスを使いたい、といったニーズもあります。
-クラウドサービスと連携させることで、これらのニーズに応えることができます。
-メールやSlackといったサービスを通して通知をすることが可能になるので、通知の自由度を高めることができます。
-
-==== 思い通りのダッシュボードを作成できる
-アプリでの値の確認方法ですが、期間や表示形式はアプリ提供者の方法に従うしかありません。
-またアプリで確認すると若干遅い、という点がデメリットです。
-Mackerelでダッシュボードを自由に作成しブラウザにブックマークすることで、これらのデメリットを解消することができ、監視の自由度が高まります。
-
-　
-
-以上でセンサーの準備は完了です。上記の理由を読んで、面白そうだなやってみたい、と思った方はこのままこの章を読み進めてください。
 
 == API連携の準備、各種アカウントの作成
 
@@ -71,7 +32,7 @@ Mackerelでダッシュボードを自由に作成しブラウザにブックマ
 
  1. SwitchBotの認証用トークンの取得
  1. AWSのアカウント作成
- 1. Mackerelのアカウント作成
+ 1. ThingSpeakのアカウント作成
  1. MackerelのAPIキーの取得
 
 まずはSwitchBotをAPIから操作する方法を説明します。
@@ -139,7 +100,39 @@ APIドキュメントの詳細はGitHubから確認できます。@<fn>{switchbo
 
 //footnote[switchbot_api][@<href>{https://github.com/OpenWonderLabs/SwitchBotAPI#switchbotapi} SwitchBot API]
 
-=== AWSアカウントの作成
+=== プログラム実行前の準備（ThingSpeak側）
+
+プログラムを実行するには、ThingSpeakのチャンネルIDの設定とAPIキーの取得が必要になるので、ThingSpeakアカウントの作成手順からチャンネルの設定までを説明します。
+
+データの受け手となるThingSpeak（@<href>{https://thingspeak.mathworks.com/}）のアカウントを作成します。
+
+//image[thingspeak][ThingSpeakのトップ画面][scale=0.75]
+
+登録にはメールアドレスが必要なので、登録と認証を済ませます。
+
+//image[thingspeak_signup][アカウント登録画面][scale=0.75]
+
+登録が完了すると、マイページが表示されるので「New Channel」をクリックします。
+
+//image[thingspeak_new_channel][チャンネル作成ボタン][scale=0.75]
+
+チャンネル名と、どういった値を受信するのかを設定する必要があるので、次のように入力します。
+
+//image[thingspeak_channel_settings][チャンネル設定画面][scale=0.75]
+
+最後に、「Save Channel」をクリックします。
+
+//image[thingspeak_channel_save][チャンネル保存ボタン][scale=0.75]
+
+チャンネルが作成されると、各種タブが表示されるので、「API Keys」タブをクリックし、Read API KeysとWrite API Keyが存在するのを確認します。
+
+//image[thingspeak_api_keys][API Keysタブ][scale=0.75]
+//image[thingspeak_api_keys_values][Read API KeysとWrite API Keyの値][scale=0.75]
+
+これで、ラズパイ側でプログラムを実行し、ThingSpeakにデータを送信する準備が整いました。
+
+
+=== プログラム実行前の準備（AWS側）
 
 AWSアカウントの作成ですが、こちらについては詳細には説明しません。@<fn>{aws_no_detail}公式のドキュメントを参照してください。@<fn>{aws_account_setup}
 
@@ -152,59 +145,7 @@ AWSアカウントの作成ですが、こちらについては詳細には説�
 
 //image[aws_console][コンソールの画面][scale=0.75]
 
-=== Mackerelの設定
 
-==== Mackerelのアカウント作成
-
-続いてMackerelのアカウント作成を行います。
-
-まずはMackerelのサインアップ画面にアクセスします。@<fn>{mackerel_signup}
-
-ソーシャルログインが可能なので、GoogleもしくはGitHubアカウントがある方は、そちらでサインアップすると良いでしょう。
-
-//image[mackerel_signup][Mackerelのサインアップ画面][scale=0.75]
-
-//footnote[mackerel_signup][@<href>{https://mackerel.io/signup} Mackerelのサインアップ画面]
-
-オーガニゼーション（組織）名を最初に設定する必要があるので、適当な名前を設定します。個人で利用にチェックを入れて「作成」ボタンを選択します。
-
-//image[mackerel_organization][オーガニゼーションの画面][scale=1.0]
-
-プランを選択する画面が表示されますので、Trialプランを選択します。
-
-//image[mackerel_plan][プランを選択する画面][scale=1.0]
-
-こちらはサインアップ時にカード情報の入力は不要なので、以上でアカウント作成は完了になります。
-
-//image[mackerel_dashboard][ダッシュボードの画面][scale=0.75]
-
-=== MackerelのAPIキーの取得
-
-続いてAPIを取得します。
-
-ダッシュボードから「オーガニゼーション詳細」を選択肢、「APIキー」のタブを選択します。
-
-すでにdefaultのAPIキーが作成されているので、これを使用します。
-
-//image[mackerel_api_key][APIキーの画面][scale=0.75]
-
-名前はなんでも良いのですが、わかりやすいように「編集」ボタンを選択し、「SwitchBot」という名前に変更すると良いでしょう。
-
-//image[mackerel_api_key_edit][APIキーの編集][scale=0.75]
-
-==== Mackerelのサービスの作成
-
-続いて、Mackerelのサービスを作成します。
-
-ダッシュボードから「サービス」を選択し、「サービスを新規作成」ボタンを選択します。
-
-//image[mackerel_service_create][サービスの作成][scale=0.75]
-
-ここではサービス名に「SwitchBotSensor」と入力し、「作成」ボタンを選択します。
-
-//image[mackerel_service_create_2][サービスの作成2][scale=0.75]
-
-これでMackerelに関する準備は完了です。
 
 == センサー値取得プログラムの作成
 
@@ -217,7 +158,7 @@ AWSアカウントの作成ですが、こちらについては詳細には説�
  1. 環境変数を設定する
  1. テストを実行し、結果を確認する
  1. AWSのEventBridgeで定期的に実行するように設定する
- 1. Mackerelのダッシュボードを作成する
+ 1. Grafanaのダッシュボードを作成する
 
 それでは順を追って説明します。
 
@@ -372,90 +313,128 @@ AWSの検索画面に「EventBridge」と入力して、トップに表示され
 
 これで30分に一回、このプログラムが実行される設定が完了しました。
 
-=== Mackerelでダッシュボードを作成する
-
-これでセンサーの値をWeb上で確認できるようになりましたが、せっかくなので、値を見やすいグラフにしてまとめて表示させましょう
-
-筆者はMackerelにこんなダッシュボードを作成しています。
+=== Grafanaでダッシュボードを作成する
+これでセンサーの値をWeb上で確認できるようになりましたが、筆者はGrafanaにダッシュボードを作成しています。
 こうすれば、視覚的に今どうなっているのか把握しやすいですし、外出先でも簡単に生育環境の状況を確認することができます。
 
-縦に配置しているのは、スマホから確認した時の可読性を高めるためです。
+1. Grafana Cloudアカウントの作成:
 
-//image[mackerel_dashboard_2][Mackerelのダッシュボード][scale=0.75]
+Grafana Cloudのウェブサイト（@<href>{https://grafana.com/products/cloud/}）にアクセスします。
 
-ダッシュボードを作成する手順を説明します。
+「Create free account」をクリックし、指示にしたがってアカウントを作成します。ソーシャルログインに対応しているので簡単にログインが可能です。
 
-左側のメニューから「ダッシュボード」を選択し、「カスタムダッシュボードを作成」ボタンを選択します。
+//image[grafana_cloud_signup][Grafana Cloudのアカウント登録画面][scale=0.75]
 
-//image[mackerel_dashboard_create][ダッシュボードの作成例][scale=0.75]
+アカウント作成後、セットアップ画面が表示されます。右上の「I'm already familiar with Grafana〜」をクリックし、この画面はスキップします。
 
-任意のダッシュボード名を入力します。
+//image[grafana_cloud_setup][セットアップ画面][scale=0.75]
 
-==== Valueのウィジェットの作成
+2. Connectionの追加
 
-気温のValueウィジェットを作成してみましょう。
+「Add new connection」と画面に表示されるのを確認します。もし表示されていなければ左側のメニューから「Connections」> 「add new connection」を選択します。
 
-Valueのアイコンをドラッグ&ドロップして、ダッシュボードに配置します。
+#@# 「Add data source」をクリックします。？
 
-//image[mackerel_dashboard_value_widget][Valueのウィジェットの作成][scale=0.75]
+検索バーで 「JSON」 と検索し、「JSON API」を選択します。
 
-編集画面が開くので、次のように入力します。
+//image[grafana_cloud_add_json_api][JSON APIの選択画面][scale=0.75]
 
- * タイトル：Temperature
- * メトリック：サービスメトリック
- * サービス：SwitchBotSensor
- * メトリック：switchbot.temperature
- * 小数点以下の桁数：1
- * 単位：℃
+「install」を選択します。
 
- 正しく設定されれば、編集画面の右側にプレビューが表示されます（@<img>{mackerel_dashboard_value_widget_edit}参照）
+//image[grafana_cloud_install_json_api][JSON APIのインストール画面][scale=0.75]
 
-//image[mackerel_dashboard_value_widget_edit][Valueのウィジェットの編集][scale=0.75]
+3. Data Sourceの追加
 
-==== Graphのウィジェットの作成
+左側のメニューから「Connections」> 「Data sources」を選択します。
 
-次に、CO2のGraphウィジェットを作成してみましょう。
+//image[grafana_cloud_data_sources][Data sources画面][scale=0.75]
 
-Graphのアイコンをドラッグ&ドロップして、ダッシュボードに配置します。
+「Add new data source」をクリックし、先ほどインストールしたJSON APIを選択します。
 
-編集画面が開くので、次のように入力します。
+//image[grafana_cloud_add_data_source][Data sourceの追加画面][scale=0.75]
+//image[grafana_cloud_data_source_select][JSON APIの選択][scale=0.75]
 
- * タイトル：CO2
- * グラフのタイプ：式グラフ
- * 関数：service(SwitchBotSensor, switchbot.co2)
+次の設定を行います。
 
-//image[mackerel_dashboard_graph_widget_edit][Graphのウィジェットの編集][scale=0.75]
+ * Name: ThingSpeak（任意の名前です）
+ * URL: https://api.thingspeak.com/channels/@<b>{ID}/feeds.json?api_key=@<b>{API} @<fn>{thingspeak_api_url}
 
-=== Mackerelの通知について
+//image[grafana_cloud_data_source_settings][Data sourceの設定画面][scale=0.75]
 
-Mackerelのメニューにある「監視ルール」を設定することで、ある一定の条件に基づいた通知を行うことができます。
+ * ここまでの設定に問題がなければ「Save & Test」をクリックすると、画面上にSuccessと表示され、設定が保存されます。
 
-たとえば、CO2が1000ppmを超えたら通知を行う、というような設定ができます。
+//image[grafana_cloud_data_source_success][Data sourceの設定成功画面][scale=0.75]
 
-通知の手段は、メール、Slack、Chatwork、Microsoft Teamsなどから選択できます。@<fn>{mackerel_notification}
+//footnote[thingspeak_api_url][ID と API はThingSpeakのチャンネルIDとRead API Keyにそれぞれ置き換えてください]
 
-//footnote[mackerel_notification][かつてはLINEも選択肢にありましたが、LINE Notifyが2025年3月31日にサービス終了したため、現在は選択することができません]
+4. ダッシュボードの作成:
 
-この辺りは、もし興味があれば、ご自身で調べて設定すると良いでしょう。
+左側のメニューから「Dashboards」を選択します。
 
-//image[mackerel_notification_rule][監視ルールの設定画面][scale=0.75]
+//image[grafana_cloud_create_dashboard][Dashboardの作成画面][scale=0.75]
 
-=== Mackerelのプランに関する注意点
+「New dashboard」をクリックします。
 
-Mackerelは2週間のTrial期間が終了したら、プランがフリーになりスタンダードの機能が使えなくなります。大きな問題として、データ保存期間が1日のみになります。
+//image[grafana_cloud_add_dashboard][Panelの追加画面][scale=0.75]
 
-もし過去からのセンサー値の推移を把握したいと思う方は月額費用を払って使い続けるとよいでしょう。
+「Add visualization」をクリックします。
+
+//image[grafana_cloud_add_visualization][Visualizationの追加画面][scale=0.75]
+
+データソースを聞かれるので、先ほど作成したThingSpeakを選択するために検索窓に「thing」と入力し、「ThingSpeak」を選択します。
+
+//image[grafana_cloud_select_data_source][Data Sourceの選択画面][scale=0.75]
+
+データソースの詳細設定を行う画面が表示されるので、設定を行います。
+
+次の２つを設定します（@<list>{grafana_cloud_data_source_settings_fields}）。
+
+//list[grafana_cloud_data_source_settings_fields][Data Sourceの設定画面][scale=0.75]{
+$. feeds [*].created_at
+$. feeds [*].field1
+//}
+
+また、型[Type]を正しく設定する必要があるため、次のように設定します（@<list>{grafana_cloud_data_source_settings_fields_type}）。
+
+//list[grafana_cloud_data_source_settings_fields_type][Data Sourceの設定画面][scale=0.75]{
+$. feeds [*].created_at -> Time
+$. feeds [*].field1 -> Number
+//}
+
+//image[grafana_cloud_data_source_settings2][Data Sourceの設定画面][scale=0.75]
+
+すると画面上に取得した数値が折れ線グラフで表示されます。
+
+あとは、パネルのTitleを適切なものに変更します。Field1の場合は、気温のため「Temperature」もしくは「気温の推移」というように変更します。
+
+Save Dashboardをクリックしてダッシュボードを保存します。
+
+同様の手順で、他のセンサーデータについても取得できるようにしパネルを作成します。
+
+Grafanaでは表示形式について色々と設定できますが、それについて説明すると長くなってしまうのと、筆者自身が詳しくないため、割愛します。
+
+参考までに筆者はこちらの図のようなダッシュボードを作成しています。
+
+//image[grafana_cloud_dashboard][筆者のダッシュボード][scale=0.75]
 
 == まとめ
 
-ここまでで、SwitchBotのCO2センサーの値をMackerelに送信するところまでを説明しました。
+ここまでで、SwitchBotのCO2センサーの値をThingSpeakに送信し、Grafanaでダッシュボードを作成するところまでを説明しました。
 
-このように、AWSのLambdaを使うことで簡単にセンサーの値を取得し、いつでもどこでも生育環境を確認することができます。
+このように、AWSのLambdaを使うことで簡単にセンサーの値を取得し、SwitchBotのアプリで見るよりも
 
-== おまけ（カメラによる監視）
+見やすく自由度の高いダッシュボードを作成することができました。
 
-筆者はネットワークカメラにもSwitchBotの製品を使っていますが、ネットワークカメラを使うことで、リアルタイムの生育状況を出先から確認することができます。
 
-//image[switchbot_camera][SwitchBotのネットワークカメラで撮影した画像][scale=0.75]
+#@# ==== 思い通りのダッシュボードを作成できる
+#@# アプリでの値の確認方法ですが、期間や表示形式はアプリ提供者の方法に従うしかありません。
+#@# またアプリで確認すると若干遅い、という点がデメリットです。
+#@# Mackerelでダッシュボードを自由に作成しブラウザにブックマークすることで、これらのデメリットを解消することができ、監視の自由度が高まります。
 
-このカメラで撮った写真を定期的にGooglePhotoに送ることができれば、簡単にタイムラプス動画が作成できるのに、と思っているのですが、うまい方法をまだ見つけられていません。今後の課題です。
+#@# == おまけ（カメラによる監視）
+
+#@# 筆者はネットワークカメラにもSwitchBotの製品を使っていますが、ネットワークカメラを使うことで、リアルタイムの生育状況を出先から確認することができます。
+
+#@# //image[switchbot_camera][SwitchBotのネットワークカメラで撮影した画像][scale=0.75]
+
+#@# このカメラで撮った写真を定期的にGooglePhotoに送ることができれば、簡単にタイムラプス動画が作成できるのに、と思っているのですが、うまい方法をまだ見つけられていません。今後の課題です。
