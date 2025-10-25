@@ -7,19 +7,19 @@ PREDEF:
 
 CHAPS:
 # 簡単な監視を始めよう
-- 10_start.re
+- 110_start.re
 
 # ダッシュボードを作ってみよう
-- 10_dashboard.re
+- 120_dashboard.re
 
 # 定点カメラで自動撮影しよう
-- 10_camera.re
+- 130_camera.re
 
 # センサーを使ってモニタリングしよう
-- 10_sensor.re
+- 140_sensor.re
 
 # 装置を作ってみよう
-- 10_device.re
+- 150_device.re
 
 # # その他
 # - 10_other.re
