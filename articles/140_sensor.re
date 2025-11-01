@@ -50,7 +50,7 @@ Arduino系は電源を入れるだけですぐに書き込んだプログラム�
 どちらが優れているという話ではなく、センサーを扱うにはArduino系が向いているということです。
 そのため、Raspberry Piはデータを集めて解析したり、クラウドに送信したりする側、Arduinoは現場でセンサーを扱う側として使い分けるのが良いでしょう。
 
-=== 配線トラブルを減らせる構成
+=== 配線トラブルを減らせる
 
 センサーを複数扱うと、電源（VCC・GND）や信号線の取り回しで配線が複雑になりがちです。
 ジャンパワイヤを使ったブレッドボード配線は学習には良いのですが、接触不良や挿し間違いが起きやすく、初心者にとってはトラブルの原因になりやすい部分です。
@@ -63,8 +63,8 @@ Groveは4ピンの専用ケーブルで、センサーを差し込むだけで�
 
 //footnote[soldering][もっと正直に言うと、文系ソフトウェアエンジニアの自分にとって回路図や配線図がマニュアルに出てきた瞬間「自分とは関わりのない世界だ！」と脳が拒絶反応を示して激萎えしてしまいます。そんな自分でもセンサーでデータを取得したい！と言う願望を叶えてくれるのがSeeed社のセンサーたちだったんです。]
 
-=== Seeeduino（シーデュイーノ）とは
-まず、Arduinoは、イタリアのArduino社が開発したオープンソースのマイコンボードです。「オープンソース」であるため、設計図が公開されており、誰でも互換機を作ることができます。
+=== 互換機 Seeeduino（シーデュイーノ）とは
+そしてここで、Arduino互換機のSeeeduinoについて説明します。まず、Arduinoは、イタリアのArduino社が開発したオープンソースのマイコンボードです。「オープンソース」であるため、設計図が公開されており、誰でも互換機を作ることができます。
 Seeeduinoは、中国のSeeed Studio社が製造するArduino互換機です。Arduino公式ボードとピン配置や動作は完全に同じなので、Arduinoのスケッチ(プログラム)やライブラリがそのまま使えます。
 
 @<b>{なぜ互換機を選ぶのか}
@@ -73,6 +73,7 @@ Arduino公式のUno R3は3,000円程度ですが、Seeeduinoは1,500円程度で
 互換機を使っても機能的なデメリットはほぼありません。むしろ、Seeeduinoには後述するGroveコネクタという独自の利点があります。
 
 @<b>{Groveコネクタという福音}
+
 通常、Arduinoにセンサーを接続する場合、ブレッドボードとジャンパーワイヤーを使った配線作業が必要です。
 センサー → ジャンパーワイヤー数本 → ブレッドボード → Arduino
 
@@ -123,9 +124,7 @@ Seeeduino XIAO	超小型(WiFi対応版もあり)	1,000円
 
 === Lotus選定の理由
 
-**Seeeduino Lotus**は、**基板上に12個のGroveコネクタが最初から実装**されています。
-
-Seeeduino Lotusには、以下の12個のGroveコネクタが用意されています:
+Seeeduino Lotusは、基板上に12個のGroveコネクタが最初から実装されています。
 
  * デジタルコネクタ × 7個 (D2〜D8)
  * アナログコネクタ × 3個 (A0〜A2)
@@ -146,11 +145,12 @@ Seeeduino Lotusには、以下の12個のGroveコネクタが用意されてい�
 //table[sensor_list][購入品一式]{
 品目	個数	購入先	目安の価格
 ------------------
-Seeeduino Lotus@<fn>{seeeduino_lotus}	1つ	Seeed Studio	¥10,800
+Seeeduino Lotus Cortex M0+@<fn>{seeeduino_lotus}	1つ	Seeed Studio	¥10,800
 温度センサー@<fn>{temperature_sensor}	1つ	Seeed Studio	¥1,080
 照度センサー@<fn>{light_sensor}	1つ	Seeed Studio	¥1,080
 音量センサー@<fn>{volume_sensor}	1つ	Seeed Studio	¥1,080
 水位センサー@<fn>{water_level_sensor}	1つ	Seeed Studio	¥1,080
+LCD液晶ディスプレイ@<fn>{lcd_display}	1つ	Seeed Studio	¥1,080
 
 //}
 
@@ -160,10 +160,11 @@ Seeeduino Lotus@<fn>{seeeduino_lotus}	1つ	Seeed Studio	¥10,800
 //footnote[light_sensor][@<href>{https://www.seeedstudio.com/Grove-Light-Sensor-p-1141.html} 照度センサー]
 //footnote[volume_sensor][@<href>{https://www.seeedstudio.com/Grove-Sound-Sensor-p-1000207.html} 音量センサー]
 //footnote[water_level_sensor][@<href>{https://www.seeedstudio.com/Grove-Water-Sensor-p-1000206.html} 水位センサー]
+//footnote[lcd_display][@<href>{https://www.seeedstudio.com/Grove-LCD-RGB-Backlight-p-2101.html} LCD液晶ディスプレイ]
 
 == センサーの接続方法
 
-センサーの接続方法は非常に簡単です。
+センサーの接続方法は解説がいるのか？と疑問に浮かぶくらい非常に簡単です。
 
 Seeeduino Lotusに12個搭載されているGroveコネクタと呼ばれるコネクタに、差し込むだけです。
 
@@ -175,21 +176,16 @@ Seeeduino Lotusに12個搭載されているGroveコネクタと呼ばれるコ�
 
 それでは、センサーデータを取得するプログラムを作成していきます。
 
-手順は次のとおりです。
+手順は次のとおりです。多いですが、一つ一つ順を追って見ていきましょう。
 
+ 1. Arduino IDEの設定をする
  1. GitHubから一定感覚でセンサーデータを取得するプログラムのソースコードを取得する
- 1. ソースコードをArduino IDEに貼り付ける
  1. プログラムをSeeeduino Lotusにアップロードする
  1. 出力結果を確認する
  1. Seeeduino Lotusをラズベリーパイに接続する
  1. ラズベリーパイで、Seeeduino Lotusから取得したセンサーデータをThingSpeakに送信するプログラムを実行する
  1. 結果をThingSpeakで確認する
  1. Grafanaのダッシュボードを更新する
-
-== Arduino IDEの準備（Seeeduino Lotusを使うために）
-
-Seeeduino LotusはArduino互換機ですが、Arduino Unoとは製造元が異なります。  
-最初にArduino IDE側で「Seeeduinoボードの設定」を追加しておきます。
 
 === Arduino IDEをインストールする
 
@@ -198,65 +194,105 @@ https://www.arduino.cc/en/software
 
 Windows、macOSいずれでも構いません。インストール後、「ツール」メニューが開けることを確認します。
 
-=== Seeeduino用ボードパッケージを追加する
+== Seeeduino用ボードパッケージを追加する
 
-Seeeduino Lotusを利用するには、Seeed Studioが提供しているボード定義を追加します。
+Seeeduino Lotus Cortex M0+ は Arduino 互換機ですが、Arduino Uno とは製造元・チップ構成が異なります。
+そのため、Arduino IDE に Seeed 製ボードパッケージを追加する必要があります。
 
-  #. メニューから [ファイル] → [環境設定] を開く  
-  #. 「追加のボードマネージャのURL」欄に次を入力  
+メニューから [ファイル] → [環境設定] を開く
 
-     https://files.seeedstudio.com/arduino/package_seeeduino_boards_index.json
+「追加のボードマネージャのURL」欄に次を入力
 
-  #. ［OK］を押して閉じる
+https://files.seeedstudio.com/arduino/package_seeeduino_boards_index.json
 
-=== ボードマネージャからSeeeduinoをインストールする
+［OK］を押して閉じる
 
-  #. [ツール] → [ボード] → [ボードマネージャ…] を開く  
-  #. 検索欄に「seeeduino」と入力  
-  #. 「Seeed AVR Boards（Seeeduino）」を選び「インストール」
+=== ボードパッケージのインストール
 
-インストール完了後、「Seeeduino Lotus」を選択できるようになります。
+[ツール] → [ボード] → [ボードマネージャ…] を開く
 
-=== ボードとポートを設定する
+検索欄に「seeeduino」と入力
 
-  #. [ツール] → [ボード] → [Seeed AVR Boards] → [Seeeduino Lotus] を選択  
-  #. [ツール] → [ポート] で接続されたポートを選ぶ  
-     - Windows: COM3など  
-     - macOS: /dev/cu.usbmodemXXXX  
+「Seeed SAMD Boards」を探して「インストール」をクリック
 
-ポートが表示されない場合はCH340ドライバを導入します。  
-https://wiki.seeedstudio.com/CH340_Driver/
+これで Seeeduino Cortex M0+ 系のボードが Arduino IDE に追加されます。
 
-=== 接続確認（Lチカ）
+== Seeeduino Lotus Cortex M0+ をPCに接続する
 
-動作確認のため、[ファイル] → [スケッチ例] → [01.Basics] → [Blink] を開いて書き込みます。  
-基板上のLEDが1秒間隔で点滅すれば成功です。
+Seeeduino Lotus Cortex M0+ を Micro USB ケーブルで PC に接続します。
+ケーブルは「データ通信対応」のものを必ず使用してください。
+100円ショップでよく売られている「充電専用」と書かれたケーブルではスケッチの書き込みができません。
+
+接続が完了すると、Arduino IDE のポートリストに新しいポートが表示されます。
+Windows では「COMx」（x は数字）、macOSやLinuxでは「/dev/cu.usbmodemXXXX」といった形式になります。
+ポートが分からない場合は、一度 USB を抜き差しして、新たに現れたポートを選びます。
+
+todo 画像
+
+== ボードとポートを設定する
+
+ボードとポート、紛らわしいですが別物です。この場合のポートとは、PCとボードを接続するための通信線のことです。
+
+//TODO LoRa WAN ？結局？ * [ツール] → [ボード] → [Seeed SAMD Boards] → [Seeeduino Lotus Cortex M0+] を選択
+ * [ツール] → [ポート] で接続されたポートを選択
+
+ポートが表示されない場合はドライバが必要になる場合があります。
+最新のドライバは Seeed Studio の公式Wikiから入手できます。
+https://wiki.seeedstudio.com/Seeeduino_Lotus_Cortex_M0+/
+
+ボーレートは 115200bps に設定しておきましょう。
+
+== 接続確認（Lチカ）
+
+動作確認のため、[ファイル] → [スケッチ例] → [01.Basics] → [Blink] を開いて書き込みます。
+基板上の LED が 1 秒間隔で点滅すれば成功です。
+
+Seeeduino Lotus Cortex M0+ は Arduino Zero と同じ SAMD21 系チップを使用しており、
+USBポートがネイティブUSBとして動作します。
+シリアルモニタを開く場合は SerialUSB を使う点に注意してください。
 
 == センサーを接続する
 
-ここから、Seeeduino Lotusに複数の環境センサーを接続してデータを取得します。  
-対象とするセンサーは次の5種類です。
+ここから、Seeeduino Lotus Cortex M0+ に複数の環境センサーを接続してデータを取得します。
+対象とするセンサーは次の4種類です。
 
-* 温度センサー（DS18B20）
-* 水位センサー（Grove Water Level）
-* 電気伝導度（EC）センサー（DFRobot EC10）
-* 照度センサー（Grove Light Sensor TSL2561）
-* 騒音センサー（Grove Loudness Sensor）
+温度センサー（DS18B20）
 
-Seeeduino LotusのGroveコネクタを利用し、ケーブルを差し込むだけで配線できます。
+水位センサー（Grove Water Level）
 
-| センサー | 接続ポート |
-|-----------|------------|
-| 温度センサー | D2 |
-| 水位センサー | I2C (0x77/0x78) |
-| ECセンサー | A2 |
-| 騒音センサー | A6 |
-| 照度センサー | I2C |
+照度センサー（Grove Light Sensor TSL2561）
+
+騒音センサー（Grove Loudness Sensor）
+
+Cortex M0+ は Grove コネクタが標準搭載されており、ケーブルを差し込むだけで接続が完了します。
+
+センサー	接続ポート
+温度センサー	D2
+水位センサー	I2C (0x77/0x78)
+騒音センサー	A6
+照度センサー	I2C
+
+== なぜ Cortex M0+ を選ぶのか
+
+Seeed Studio の販売サイトを見ると、Seeeduino Lotusには、古い ATmega328P 版と Cortex M0+ 版の2種類が存在します。
+ATmega 版は5V系センサーとの互換性が高い反面、現在は製造終了となっており、入手が難しくなっています。
+
+一方で Cortex M0+ 版は 3.3V 動作ですが、
+Seeed Studio が現在も出荷している現行モデルであり、Arduino IDE との互換性も高く、今後のセンサーラインナップにも対応しています。
+本書では、再現性と調達性を優先し、Cortex M0+ 版を標準環境として採用します。
+
+== 旧版（ATmega328P版）を使用する場合
+
+もし手元に ATmega328P 版 Seeeduino Lotus がある場合は、
+Arduino IDE の [ツール] → [ボード] → [Seeed AVR Boards] → [Seeeduino Lotus] を選択してください。
+接続・スケッチ手順はほぼ同じですが、一部のライブラリで互換性が異なる場合がある点だけ注意すれば問題なく動作します。
 
 === コード
 
 次のスケッチをArduino IDEで開いて書き込みます。  
 各センサーが接続されていない場合でも、エラーを出さずに動作します。
+
+//listnum[sensor_monitor][sensor_monitor.ino]{
 
 #include <OneWire.h>
 #include <DallasTemperature.h>
@@ -362,8 +398,7 @@ int total = low_count + high_count;
 return (total * 100) / 20;
 }
 
-diff
-コードをコピーする
+//}
 
 === 動作確認
 
@@ -373,9 +408,6 @@ diff
 Temp: 24.6C | Water: 80% | EC: 2210 uS/cm | Sound: 45.8 dB | Light: 324 lux
 Temp: 24.7C | Water: 79% | EC: 2205 uS/cm | Sound: 47.2 dB | Light: 125 lux
 
-mathematica
-コードをコピーする
-
 数値が周期的に更新されれば、すべてのセンサーが動作しています。
 
 == 液晶モニタに表示する
@@ -383,6 +415,7 @@ mathematica
 I²C接続のLCD（Grove LCD 1602など）をI²Cポートに接続します。  
 ライブラリ `<LiquidCrystal_I2C.h>` を利用し、値を表示します。
 
+//listnum[lcd_display][lcd_display.ino]{
 #include <LiquidCrystal_I2C.h>
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
@@ -393,8 +426,9 @@ lcd.backlight();
 lcd.print("Sensor Ready");
 }
 
-arduino
-コードをコピーする
+//}
+
+//listnum[lcd_display_loop][lcd_display_loop.ino]{
 
 loop内の最後に次を追加します。
 
@@ -416,6 +450,9 @@ mathematica
 コードをコピーする
 
 LCDに温度・水位・照度・音量が更新表示されます。
+
+
+
 
 == Raspberry Piでシリアルデータを受信する
 
