@@ -30,9 +30,6 @@ CHAPS:
 # 4コマ漫画
 - 20_4koma.re
 
-# さらに高度な監視の紹介など今後の展望
-- 30_future.re
-
 POSTDEF:
 # あとがき
  - 99_postscript.re

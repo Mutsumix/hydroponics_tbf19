@@ -4,19 +4,19 @@
 
 この章では、センサーデータをThingSpeakというクラウドサービスに保存し、Grafanaというツールを使って自分好みのダッシュボードを作成する方法について紹介します。
 
-自分好みのダッシュボードを作成する理由ですが、自分が知りたいデータを自分の知りたいレイアウトや表示する期間に設定することで、得られた数値を育成している植物の生育状況の把握がしやすくなる、ということが目的としてあります。
+自分好みのダッシュボードを作成する理由ですが、自分が知りたいデータを自分の知りたいレイアウトや表示する期間に設定することで、育成している植物の生育状況の把握がしやすくなります。
 
 それぞれのサービス・ツールは機能が豊富にあるのですが、この章では深掘りすることは避け、最低限のデータ連携を行うところまでを目的に説明していきます。
 
 まずは概要を説明します。
 
-用意する機器は、@<chap>{110_start} @<title>{110_start} の章で紹介したSwitchBotのCO2センサーとハブミニです。追加で必要なものは特にありません。
+用意する機器は、@<chap>{110_start} @<title>{110_start} の章で紹介したSwitchBotのCO2センサーとハブミニです。追加で必要な機材はありません。
 
 強いて言えば、これから説明する操作を実行するためのPCが必要です。WindowsでもMacでもLinuxでも、OSは問いません。
 
 センサーの値を取得するために実行するPythonのプログラムは、AWSというクラウドベンダが提供しているLambdaというサービスを使って動かします。
 
-そして、ThingSpeak（シングスピーク）というサービスにデータを保存し、Grafana（グラファナ）というサービスを利用して、見やすいダッシュボードを作成します。
+#@# そして、ThingSpeak（シングスピーク）というサービスにデータを保存し、Grafana（グラファナ）というサービスを利用して、見やすいダッシュボードを作成します。
 
 全体の構成図を以下に示します。
 
@@ -33,7 +33,7 @@
  1. SwitchBotの認証用トークンの取得
  1. AWSのアカウント作成
  1. ThingSpeakのアカウント作成
- 1. MackerelのAPIキーの取得
+ 1. ThingSpeakのAPIキーの取得
 
 まずはSwitchBotをAPIから操作する方法を説明します。
 
@@ -166,11 +166,14 @@ AWSアカウントの作成ですが、こちらについては詳細には説�
 
 GitHubからプログラムのソースコードを取得します。
 
-著者のリポジトリにアクセスしてください。@<fn>{switchbot_co2_mackerel}
+著者のリポジトリにアクセスしてください。@<fn>{switchbot_co2_thingspeak}
 
-//footnote[switchbot_co2_mackerel][@<href>{https://github.com/Mutsumix/switchbot-co2-mackerel} プログラムのリポジトリ]
+//footnote[switchbot_co2_thingspeak][@<href>{https://github.com/Mutsumix/switchbot-co2-thingspeak} プログラムのリポジトリ]
 
 アクセスした先の画面で、「Code」ボタンを選択し「Download ZIP」を選択して、zipファイルをダウンロードして、解凍します。
+
+
+// todo zipパッケージの作成
 
 //image[github_download_zip][GitHubからzipファイルをダウンロードする][scale=0.75]
 //image[unzip_lambda][zipファイルを解凍する][scale=0.75]
@@ -221,7 +224,7 @@ GitやGitHubに慣れている人はクローンしてください、慣れて�
 
 ==== 環境変数の設定
 
-次に、このアップロードしたプログラムが、あなたのSwitchBotの情報を参照し、Mackerelにデータを追加できるように環境変数を設定します。
+次に、このアップロードしたプログラムが、あなたのSwitchBotの情報を参照し、ThingSpeakにデータを追加できるように環境変数を設定します。
 
 Lambda関数の設定画面の「環境変数」タブを選択し、「環境変数」の項目を選択し、「編集」ボタンを選択します。
 
@@ -232,8 +235,7 @@ Lambda関数の設定画面の「環境変数」タブを選択し、「環境�
  * SWITCHBOT_TOKEN：SwitchBotの開発者向けオプションで「トークン」の項目で確認可能
  * SWITCHBOT_SECRET：SwitchBotの開発者向けオプションで「クライアントシークレット」の項目で確認可能
  * SWITCHBOT_DEVICE_ID：Curlコマンドで取得したCO2センサーの deviceId
- * MACKEREL_API_KEY：MackerelのAPIキーの設定画面から確認可能
- * MACKEREL_SERVICE_NAME：SwitchBotSensor
+ * THINGSPEAK_API_KEY：ThingSpeakのAPIキーの設定画面から確認可能
 
 //image[aws_lambda_environment_variables_2][環境変数の設定値][scale=0.75]
 
@@ -253,13 +255,13 @@ Lambda関数の設定画面の「テスト」タブを選択し、「テスト�
 
 //image[aws_lambda_test_result][テストの実行結果（詳細を広げた状態）][scale=0.75]
 
-結果の確認のためにMackerelの画面も見にいきます。
+結果の確認のためにThingSpeakの画面も見にいきます。
 
 ダッシュボードから「SwitchBotSensor」を選択し、「サービスメトリック」のタブを選択します。
 
 SwitchBotから取得したデータが送られていることが確認できます。
 
-//image[mackerel_service_metrics][サービスメトリックの画面][scale=0.75]
+// image[mackerel_service_metrics][サービスメトリックの画面][scale=0.75]
 
 === 定期実行の設定
 
@@ -421,9 +423,7 @@ Grafanaでは表示形式について色々と設定できますが、それに�
 
 ここまでで、SwitchBotのCO2センサーの値をThingSpeakに送信し、Grafanaでダッシュボードを作成するところまでを説明しました。
 
-このように、AWSのLambdaを使うことで簡単にセンサーの値を取得し、SwitchBotのアプリで見るよりも
-
-見やすく自由度の高いダッシュボードを作成することができました。
+このように、AWSのLambdaを使うことで簡単にセンサーの値を取得し、SwitchBotのアプリで見るよりも見やすく自由度の高いダッシュボードを作成することができました。
 
 
 #@# ==== 思い通りのダッシュボードを作成できる
