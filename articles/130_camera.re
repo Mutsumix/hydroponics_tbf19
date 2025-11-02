@@ -2,13 +2,13 @@
 
 この章では、植物の成長をカメラで記録する方法について説明します。
 
-ネットワークカメラを使った監視の方法については@<chapref>{110_start}@<title>{110_start} で触れました。
+ネットワークカメラを使った監視の方法については@<chapref>{110_start} で触れました。
 しかし、毎日定刻に写真を撮影することはできませんし、その写真をどこかのサーバーにアップロードすることもできませんでした。
 
 あくまでもメーカーであるSwitchBotのアプリ上で、現在の様子を見たり、誰かがカメラの近くに来た時の様子を録画して後から確認することがメインです。
-これは監視を目的としたネットワークカメラである以上、その機能を求めること自体が無理があることと言えます。
+これは監視を目的としたネットワークカメラである以上、求めること自体が無理があると言えます。
 
-そこで、市販のWebカメラを小型のPCに接続して、定点カメラの撮影を自動化についてこの章では取り組んでいきたいと思います。
+そこで、市販のWebカメラを小型のPCに接続して、定点カメラの撮影を自動化する方法についてこの章では紹介していきたいと思います。
 
 == Raspberry Piについて
 
@@ -18,12 +18,9 @@
 たとえば、USB接続のWebカメラを取り付ければ、ラズベリーパイを「自動撮影カメラ」として動かすことができます。
 プログラムを組み合わせることで、指定した時間に自動で撮影を行い、撮った写真をGoogleフォトへ自動アップロードすることも可能です。
 さらに、一定期間の写真をつなぎ合わせれば、まるでプロが作ったようなタイムラプス動画を生成することもできます。
+数値だけではなく、成長の様子を画像で記録することで、より多くの発見や気づきを得ることができます。
 
 「植物の成長記録を自動で残したい」、その思いをラズベリーパイで実現しましょう。
-本記事では、その仕組みと設定方法を、手順を追いながらできるだけわかりやすく紹介していきます。
-
-数値だけではなく、成長の様子を画像で記録することで、より多くの発見や気づきを得ることができます。
-章の最後では、タイムラプス動画（時間の経過をアニメーションで表示するいわゆる早回し動画）を作成する方法も紹介します。
 
 今回用意するものはこちらです。
 
@@ -40,32 +37,32 @@
 
 必ずしもこれが良い、というわけではありませんが、以下のもので動作検証をしています。
 
-- Raspberry Pi 4 Model B（4GB以上推奨）@<fn>{raspberry_pi}
-- microSDカード（32GB以上）
-- 市販のUSBウェブカメラ
-    - EMEET S600（画質を良くしたい場合）@<fn>{web_camera_4k}
-    - Logicool C270（安く済ませたい場合）@<fn>{web_camera_C270}
-- USB接続のキーボード・マウス
-- HDMIケーブルとモニター
-- 電源アダプタ（USB Type-C、5V/3A以上）
+ * Raspberry Pi 4 Model B（4GB以上推奨）@<fn>{raspberry_pi}
+ * microSDカード（32GB以上）
+ * 市販のUSBウェブカメラ
+  ** EMEET S600（画質を良くしたい場合）@<fn>{web_camera_4k}
+  ** Logicool C270（安く済ませたい場合）@<fn>{web_camera_C270}
+ * USB接続のキーボード・マウス
+ * microHDMIと接続可能なHDMIケーブルとモニター
+ * 電源アダプタ（USB Type-C、5V/3A以上）
 
 //footnote[raspberry_pi][@<href>{https://www.switch-science.com/products/5680} Raspberry Pi 4 Model B 4GB が初心者向けに使いやすくオススメです。]
-//footnote[web_camera_C270][@<href>{https://amzn.asia/d/bam9mhN} Logitech C270 なんの変哲もない一般的なWebカメラ]
 //footnote[web_camera_4k][@<href>{https://amzn.asia/d/8sYe7tf} EMEET 4K Webカメラ]
+//footnote[web_camera_C270][@<href>{https://amzn.asia/d/bam9mhN} Logitech C270 なんの変哲もない一般的なWebカメラ]
 
 === アカウント
 
-- Google アカウント（Google Photos用）
-- Google Cloud Platform（無料枠で使用可能）
+ * Google アカウント（Google Photos用）
+ * Google Cloud Platform（GCP）アカウント（無料枠で使用可能）
 
 == 仕組みの説明
 
 最初に全体像を図示します。
 
-// TODO 図示
+//image[camera_system_overview.drawio][全体の構成図][scale=0.75]
 
 カメラと繋がったRaspberry Piが設定ファイルに従って撮影を行い、撮影した画像をクラウド（GCP）にアップロードします。
-Google Photos Library APIと認可方式のOAuth2.0を使用しています。
+Google Photos Library APIと認可方式にはOAuth2.0を使用しています。
 
 プログラムを実行すると、ループ処理が実行されます。
 あらかじめ設定した時刻になると、接続したWebカメラでの撮影を行います。
@@ -102,7 +99,7 @@ Google Photos Library APIと認可方式のOAuth2.0を使用しています。
  * ホスト名: raspi-camera（任意、好きな名前で大丈夫）
  * ユーザー名: pi（任意ですが、以降の手順ではpiを前提にしています）
  * パスワード: 任意（忘れないように必ず記録しておきましょう）
- * Wi-Fi設定:[^1]
+ * Wi-Fi設定:@<fn>{wifi_setting}
     ** SSID: 自宅のWi-Fi名
     ** パスワード: Wi-Fiのパスワード
     ** 国: JP
@@ -110,18 +107,24 @@ Google Photos Library APIと認可方式のOAuth2.0を使用しています。
     ** タイムゾーン: Asia/Tokyo
     ** キーボードレイアウト: jp
 
+//footnote[wifi_setting][Wi-Fi設定をここで行うと、初回起動時から自動接続されます。モニターとキーボードだけで作業したい場合はここで設定しておくと便利です。]
+
 @<b>{サービスタブ：}
 
- * SSHを有効化:[^2]
+ * SSHを有効化:@<fn>{ssh_setting}
  * 認証方法: 「パスワード認証を使う」を選択
 
 「保存」→「はい」→「はい」（データが消去される警告）→書き込み開始
+
+//footnote[ssh_setting][SSHを有効にすると、別のPCからリモート操作できるようになります。後述のVNC Viewerと組み合わせると、コピー＆ペーストが簡単になります。]
 
 ==== 初回起動
 
  * 書き込みが完了したら、microSDカードを安全に取り外し、Raspberry Piに挿入してください
  * キーボード・マウス・モニターを接続
- * 電源を接続して起動[^3]
+ * 電源を接続して起動@<fn>{first_boot}
+
+//footnote[first_boot][初回起動は2-3分かかります。デスクトップ画面が表示されれば成功です。]
 
 === 接続確認
 
@@ -137,9 +140,10 @@ Google Photos Library APIと認可方式のOAuth2.0を使用しています。
 ==== 2. Raspberry Pi の外部からの操作設定
 
 @<b>{方法1. VNC Serverの有効化（推奨）}
+
 ラズベリーパイに毎度キーボードやマウス、モニターを繋いでいるとせっかくの小型PCであることのメリットが薄れてしまいますし、扱いにくいです。
 そこで別のPCからラズベリーパイに接続する方法を二つ紹介します。
-まずはVNCというツールを使って別PCから**Raspberry Pi**の画面を見て操作する方法です。
+まず紹介するのはVNCというツールを使って別PCからRaspberry Piの画面を見て操作する方法です。
 
 @<b>{Raspberry Pi側}
 
@@ -152,9 +156,9 @@ Google Photos Library APIと認可方式のOAuth2.0を使用しています。
 
 操作したいPC側にVNC Viewerをインストールします。
 
-* @<href>{https://www.realvnc.com/en/connect/download/viewer/}
-* インストール後、先ほどメモしたIPアドレスを入力して接続
-* ユーザー名とパスワードでログイン
+ * @<href>{https://www.realvnc.com/en/connect/download/viewer/}からダウンロードしてインストール
+ * インストール後、先ほどメモしたIPアドレスを入力して接続
+ * ユーザー名とパスワードでログイン
 
 VNC Viewerを使うと、操作用PCからコピー＆ペーストができるため、長いコマンドやJSONファイルの転送が楽になります。
 以降は、VNC Viewerを使う前提で、操作の説明を行なっていきます。
@@ -195,7 +199,6 @@ hostname -I
 
 //cmd{
 sudo apt update && sudo apt upgrade -y
-
 //}
 
 sudoは管理者権限で実行するコマンド、aptはソフトウェアをインストール・更新するためのツールです。
@@ -214,8 +217,8 @@ sudo apt install -y v4l-utils
 
 ==== 6. カメラの接続と確認
 
-1. WebカメラをRaspberry PiのUSBポートに接続
-2. ターミナルで認識確認：
+ 1. WebカメラをRaspberry PiのUSBポートに接続
+ 2. ターミナルで認識確認
 
 //cmd{
 # USB機器を一覧表示するコマンド
@@ -231,11 +234,10 @@ v4l2-ctl --list-devices
 //cmd{
 # カメラの対応解像度とフォーマットの確認
 v4l2-ctl -d /dev/video0 --list-formats-ext
-
 //}
 
-* EMEET S600: MJPG 1920x1080対応
-* Logicool C270: MJPG 1280x720または1280x960が最大
+ * EMEET S600: MJPG 1920x1080対応
+ * Logicool C270: MJPG 1280x720または1280x960が最大
 
 === 作業フォルダの準備とプログラムの取得
 
@@ -248,12 +250,14 @@ v4l2-ctl -d /dev/video0 --list-formats-ext
 cd ~/Desktop
 mkdir camera-project
 cd camera-project
-
 //}
 
 ==== 2. GitHubからプログラムを取得
 
 GitHubから著者の作成したプログラムをダウンロードします。
+
+@<href>{https://github.com/Mutsumix/google-photo-uploader}
+
 次のコマンドを実行してください。
 
 //cmd{
@@ -261,7 +265,6 @@ GitHubから著者の作成したプログラムをダウンロードします�
 cd ~/Desktop/camera-project
 git clone <https://github.com/Mutsumix/google-photo-uploader.git>
 cd google-photo-uploader
-
 //}
 
 git cloneはGitHub上のプログラムをダウンロードするコマンドです。実行後、camera-projectフォルダの中にgoogle-photo-uploaderフォルダが作成されます。
@@ -270,7 +273,6 @@ git cloneはGitHub上のプログラムをダウンロードするコマンド�
 
 //cmd{
 pip install -r requirements.txt --break-system-packages
-
 //}
 
 requirements.txtには、プログラムの動作に必要な部品（ライブラリ）のリストが記載されています。一つひとつインストールすることもできますが、このコマンドで一括インストールされます。インストールには数分かかります。
@@ -281,14 +283,12 @@ requirements.txtには、プログラムの動作に必要な部品（ライブ�
 
 //cmd{
 cp config.sample.yaml config.yaml
-
 //}
 
 ファイルマネージャーまたはテキストエディタでconfig.yamlを開いて編集
 
 //cmd{
 nano config.yaml
-
 //}
 
 以下のように設定：
@@ -324,8 +324,7 @@ notifications:
  * day_of_weekで撮影曜日を指定できます（mon-sunは毎日）
  * `width`と`height`はお使いのカメラの対応解像度に合わせてください（C270の場合は1280x720、S600の場合は1920x1080）
 
-編集後、`Ctrl + O`→`Enter`（保存）→`Ctrl + X`（終了）の順で操作をしてファイルを更新します。
-次からはクラウド（GCP）側の設定をしていきます。
+編集後、@<code>{Ctrl + O}→@<code>{Enter}（保存）→@<code>{Ctrl + X}（終了）の順で操作をしてファイルを更新します。
 
 === カメラのテスト撮影
 
@@ -362,11 +361,10 @@ camera:
 
 調整後、再度@<code>{python camera_module.py}で撮影して確認してください。
 
-
-
 == クラウド側（Google Cloud Platform）の設定
 
-ここからがGoogle Photos APIを使うための準備です。手順が多いですが、順番に沿って進めれば問題ありません。
+ここからはクラウド（GCP）側の設定をしていきます。
+手順が多いですが、順番に沿って進めれば問題ありません。
 
 === GCPプロジェクトの作成
 
@@ -382,7 +380,9 @@ GCPアカウントがGoogleから割り当てられた「家」だとすると�
 
 === Photos Library APIの有効化
 
-ラズパイで撮影した画像を自動的にGoogle PhotoにアップロードするためにAPIという機能を使用します。API[^6](https://www.notion.so/API%E3%81%AF%E3%82%A2%E3%83%97%E3%83%AA%E3%82%B1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%82%84%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0%E5%90%8C%E5%A3%AB%E3%82%92%E6%8E%A5%E7%B6%9A%E3%83%BB%E9%80%A3%E6%90%BA%E3%81%95%E3%81%9B%E3%82%8B%E3%81%9F%E3%82%81%E3%81%AE%E3%82%B3%E3%83%B3%E3%82%BB%E3%83%B3%E3%83%88%E3%81%AE%E3%82%88%E3%81%86%E3%81%AA%E3%82%82%E3%81%AE%E3%81%A7%E3%81%99%E3%80%82%E3%81%93%E3%81%AE%E3%82%B3%E3%83%B3%E3%82%BB%E3%83%B3%E3%83%88%E3%81%AE%E7%A9%B4%E3%81%8C%E3%81%82%E3%82%8B%E3%81%93%E3%81%A8%E3%81%A7%E3%82%A2%E3%83%97%E3%83%AA%E3%82%B1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%82%84%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0%E3%81%AF%E3%80%81%E3%81%8A%E4%BA%92%E3%81%84%E3%81%AB%E3%83%87%E3%83%BC%E3%82%BF%E3%82%92%E9%80%81%E3%82%8A%E5%90%88%E3%81%86%E3%81%93%E3%81%A8%E3%81%8C%E3%81%A7%E3%81%8D%E3%82%8B%E3%81%AE%E3%81%A7%E3%81%99%E3%80%82%E3%81%93%E3%81%AEAPI%E3%82%92%E4%BD%9C%E3%82%8B%E3%81%8B%E3%81%A9%E3%81%86%E3%81%8B%E3%81%AF%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9%E6%8F%90%E4%BE%9B%E8%80%85%E5%81%B4%E3%81%8C%E7%AC%AC%E4%B8%89%E8%80%85%E3%81%AE%E5%88%A9%E7%94%A8%E3%82%92%E6%9C%9F%E5%BE%85%E3%81%99%E3%82%8B%E3%81%8B%E3%81%A9%E3%81%86%E3%81%8B%E3%81%A7%E5%A4%89%E3%82%8F%E3%82%8A%E3%81%BE%E3%81%99%E3%80%82%E5%BD%93%E7%84%B6API%E3%82%92%E4%BD%9C%E3%81%A3%E3%81%A6%E3%81%8A%E3%82%89%E3%81%9A%E3%80%81%E8%87%AA%E5%88%86%E3%81%AE%E4%B8%96%E7%95%8C%E3%81%AB%E9%96%89%E3%81%98%E3%81%9F%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0%E3%81%AF%E3%81%82%E3%82%8A%E3%81%BE%E3%81%99%E3%81%97%E3%80%81%E3%82%80%E3%81%97%E3%82%8D%E3%81%9D%E3%81%86%E3%81%84%E3%81%A3%E3%81%9F%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0%E3%81%AE%E6%96%B9%E3%81%8C%E5%9C%A7%E5%80%92%E7%9A%84%E5%A4%9A%E6%95%B0%E3%81%A0%E3%81%A8%E6%80%9D%E3%81%84%E3%81%BE%E3%81%99%E3%80%82%E3%81%97%E3%81%8B%E3%81%97%E3%80%81%E3%81%93%E3%81%AEAPI%E3%81%AE%E4%BB%95%E7%B5%84%E3%81%BF%E3%82%92%E4%BD%9C%E6%88%90%E3%81%97%E3%83%BB%E5%85%AC%E9%96%8B%E3%81%99%E3%82%8B%E3%81%93%E3%81%A8%E3%81%A7%E3%80%81%E3%82%A2%E3%83%97%E3%83%AA%E3%82%B1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%81%AF%E4%B8%96%E7%95%8C%E4%B8%AD%E3%81%AE%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC%E3%81%AB%E9%96%8B%E3%81%8B%E3%82%8C%E3%80%81%E3%81%93%E3%82%8C%E3%81%8B%E3%82%89%E7%94%9F%E3%81%BE%E3%82%8C%E3%82%8B%E3%82%A2%E3%83%97%E3%83%AA%E3%81%AE%E5%8F%AF%E8%83%BD%E6%80%A7%E3%82%92%E6%8B%A1%E5%BC%B5%E3%81%99%E3%82%8B%E3%81%93%E3%81%A8%E3%81%8C%E3%81%A7%E3%81%8D%E3%82%8B%E3%81%AE%E3%81%A7%E3%81%99%E3%80%82)を使用するには有効化の設定が必要なので、行なっていきましょう。
+ラズパイで撮影した画像を自動的にGoogle PhotoにアップロードするためにAPIという機能を使用します。API@<fn>{api}を使用するには有効化の設定が必要なので、行なっていきましょう。
+
+//footnote[api][APIについては@<chapref>{120_dashboard}で解説しています]
 
 1. 左上のハンバーガーメニュー（三本線）→「APIとサービス」→「ライブラリ」
 2. 検索窓に「Photos Library API」と入力
@@ -438,15 +438,15 @@ OAuthの設定をしていきます。@<fn>{oauth}
 
  1. 左メニュー「認証情報」
  2. 上部の「＋認証情報を作成」→「OAuthクライアントID」
- 3. アプリケーションの種類: **「デスクトップアプリ」**を選択
+ 3. アプリケーションの種類: 「デスクトップアプリ」を選択
  4. 名前: 任意（例: Raspi Camera Client）
  5. 「作成」
 
 ==== 認証情報のダウンロード
 
- - 「OAuth 2.0 クライアントID」の一覧に作成した認証情報が表示される
- - 右端の「ダウンロード」アイコン（↓矢印）をクリック
- - JSONファイルがダウンロードされる（ファイル名はclient_secret_xxxxx.jsonのような形式）
+ * 「OAuth 2.0 クライアントID」の一覧に作成した認証情報が表示される
+ * 右端の「ダウンロード」アイコン（↓矢印）をクリック
+ * JSONファイルがダウンロードされる（ファイル名はclient_secret_xxxxx.jsonのような形式）
 
 === ファイルの配置
 
@@ -479,7 +479,6 @@ nano client_secrets.json
 //cmd{
 cd ~/Desktop/camera-project/google-photo-uploader
 python setup_auth.py --test-camera --test-upload
-
 //}
 
 === ブラウザでの認証
@@ -488,7 +487,6 @@ python setup_auth.py --test-camera --test-upload
 
 //cmd{
 Please visit this URL to authorize this application: <https://accounts.google.com/o/oauth2/auth?.>..
-
 //}
 
  1. このURLをコピー（VNC Viewerならマウスでドラッグして右クリック→コピー）
@@ -517,9 +515,9 @@ Please visit this URL to authorize this application: <https://accounts.google.co
 
 認証が成功すると、自動的に次のことが起こります
 
-1. カメラで撮影（`test_upload.jpg`として保存）
-2. Google Photosへアップロード
-3. `raspi-camera`アルバムの作成（初回のみ）
+ 1. カメラで撮影（`test_upload.jpg`として保存）
+ 2. Google Photosへアップロード
+ 3. `raspi-camera`アルバムの作成（初回のみ）
 
 ターミナルに以下のようなメッセージが表示されれば成功：
 
@@ -529,13 +527,13 @@ Upload test successful!
 Test image uploaded to album: raspi-camera
 //}
 
-ブラウザで https://photos.google.com/ を開いて、raspi-cameraアルバムに写真がアップロードされているか確認してください。
+ブラウザでGoogleフォト@<href>{https://photos.google.com/} を開いて、raspi-cameraアルバムに写真がアップロードされているか確認してください。
 
 == 定期実行の設定
 
 撮影とアップロードのスケジュールはconfig.ymlを編集することで変更ができます。
 
-//emlistnum[config.yml]{
+//emlist[config.yml]{
 scheduler:
   day_of_week: "mon-fri"  # 月〜金のみ撮影
   at_time: "12:00"        # 毎日12時に撮影
@@ -556,7 +554,6 @@ scheduler:
 //cmd{
 cd ~/Desktop/camera-project/google-photo-uploader
 python main.py
-
 //}
 
 === 自動起動について
@@ -578,7 +575,6 @@ lsusb
 # OpenCVでの動作確認
 python -c "import cv2; print(cv2.VideoCapture(0).isOpened())"
 # Trueが返ってくればOK
-
 //}
 
 @<b>{640x480の低解像度でしか撮影できない}
@@ -588,13 +584,12 @@ python -c "import cv2; print(cv2.VideoCapture(0).isOpened())"
 //cmd{
 # カメラの対応フォーマットを確認
 v4l2-ctl -d /dev/video0 --list-formats-ext | grep MJPG
-
 //}
 
 お使いのカメラの対応解像度を確認し、`config.yaml`で設定してください：
 
- * **Logicool C270**: 最大1280x720（または1280x960）
- * **EMEET S600**: 最大1920x1080
+ * Logicool C270: 最大1280x720（または1280x960）
+ * EMEET S600: 最大1920x1080
 
 //emlistnum[config.yml]{
 camera:
@@ -602,7 +597,6 @@ camera:
     width: 1280
     height: 720
     fourcc: "MJPG"  # または "YUYV"
-
 //}
 
 @<b>{Google Photos認証エラー}
@@ -615,11 +609,10 @@ rm photo_token.json
 # 手動でphoto_token.jsonしても構いません
 # 再認証
 python google_photos.py
-
 //}
 
 ブラウザで再度認証フローを実行してphoto_token.jsonを再作成してください。
-その後、python [main.py](http://main.py/) を実行してください。
+その後、@<code>{python main.py} を実行してください。
 
 == Googleフォトでタイムラプス動画を作る
 
@@ -646,7 +639,7 @@ Googleフォト（@<href>{https://photos.google.com/}）にアクセスします
 
 == 参考資料・ソース
 
-この記事で紹介した、ラズベリーパイに市販のWebカメラを接続してGoogle フォトにアップロードするアイディアは、Udemyで公開されている「[ラズベリーパイ（Raspberry Pi）と3Dプリンターで作って学ぶIoT～DIY型IoTキット作成講座～](https://t.co/hYOPOvTUa9)」という講座を大いに参考にさせていただきました。
+この記事で紹介した、ラズベリーパイに市販のWebカメラを接続してGoogle フォトにアップロードするアイディアは、Udemyで公開されている「ラズベリーパイ（Raspberry Pi）と3Dプリンターで作って学ぶIoT～DIY型IoTキット作成講座～」(@<href>{https://t.co/hYOPOvTUa9}）という講座を大いに参考にさせていただきました。
 講師である佐々木 健介(@kensukesasawood)さんは、他にも農業とITを掛け合わせたユニークな講座を公開していてとても学びが多いです。読者の中で今回の記事が面白いと感じた方がいましたら、ぜひ本記事のネタ元である講座やその他の講座を視聴することをお勧めいたします。
 
 //image[udemy-sasaki][Udemy講座はこちらから][scale=0.75]

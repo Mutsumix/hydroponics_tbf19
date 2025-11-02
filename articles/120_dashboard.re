@@ -1,6 +1,6 @@
 = ダッシュボードを作ってみよう
 
-@<chap>{110_start} 「@<title>{110_start}」 では、SwtichBotの製品とアプリを使ったセンサーデータの確認を行いました。
+@<chapref>{110_start} では、SwtichBotの製品とアプリを使ったセンサーデータの確認を行いました。
 
 この章では、センサーデータをThingSpeak（シングスピーク）というクラウドサービスに保存し、Grafana（グラファナ）というツールを使って自分好みのダッシュボードを作成する方法について紹介します。
 
@@ -24,7 +24,9 @@
 
 == API連携の準備、各種アカウントの作成
 
-プログラムを使ってセンサーの値をモニタリングするためには、API連携の準備が必要です。
+プログラムを使ってセンサーの値をモニタリングするためには、API@<fn>{api}と連携の準備が必要です。
+
+//footnote[api][APIとは、アプリケーションプログラミングインターフェースの略で、アプリケーションやプログラム同士を接続・連携させるためのコンセントのようなものです。このコンセントの穴があることでアプリケーションやプログラムは、お互いにデータを送り合うことができるのです。このAPIを作るかどうかはサービス提供者側が第三者の利用を期待するかどうかで変わります。当然APIを作っておらず、自分の世界に閉じたプログラムはありますし、むしろそういったプログラムの方が圧倒的多数だと思います。しかし、このAPIの仕組みを作成し・公開することで、アプリケーションは世界中のユーザーに開かれ、これから生まれるアプリの可能性を拡張することができるのです。]
 
 次の作業を行なっていきます。
 
@@ -50,8 +52,6 @@ SwitchBotアプリの 設定 > 開発者向けオプション から確認可能
 ==== SwitchBot クラウドサービス設定（現在は不要な設定です）
 
 APIから操作するために、SwitchBotの「クラウドサービス」をオンにしてください。（SwitchBotアプリV9.0から、クラウドサービスの項目自体が削除されていて、手動でオンにする必要がなくなりました）@<fn>{switchbot_cloud_service}
-
-//footnote[switchbot_cloud_service][@<href>{https://blog.switchbot.jp/announcement/switchbot-app-9-0/}, SwitchBot アプリバージョン9.0]
 
 ==== SwitchBot デバイスIDの取得
 
@@ -96,6 +96,7 @@ curl --request GET 'https://api.switch-bot.com/v1.0/devices' \
 
 APIドキュメントの詳細はGitHubから確認できます。@<fn>{switchbot_api}
 
+//footnote[switchbot_cloud_service][@<href>{https://blog.switchbot.jp/announcement/switchbot-app-9-0/}]
 //footnote[switchbot_api][@<href>{https://github.com/OpenWonderLabs/SwitchBotAPI#switchbotapi} SwitchBot API]
 
 === プログラム実行前の準備（ThingSpeak側）
