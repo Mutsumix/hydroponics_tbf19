@@ -20,6 +20,7 @@
 
 //image[sensor_system_overview.drawio][センサーデータ取得システムの全体像][scale=0.75]
 
+Raspberry Piへの送信とGrafanaへの反映は、@<chapref>{145_finishing} で説明します。
 
 まずはこの章で扱う機器についての理解を深めることにしましょう。
 

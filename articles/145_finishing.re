@@ -17,7 +17,7 @@ Seeduinoから取得したセンサーデータをRaspberry Piで受信するた
 
 Raspberry PiのUSBポートとSeeeduino LotusのMicro USBポートを接続するケーブルを用意します。
 
-#@# TODO 画像 こんなの
+TODO 画像 こんなの
 
 Raspberry Pi側で、次のコマンドでデバイス名を確認します。
 
@@ -25,7 +25,7 @@ Raspberry Pi側で、次のコマンドでデバイス名を確認します。
 $ ls /dev/ttyACM*
 //}
 
-一般的には `/dev/ttyACM0` です。
+一般的には @<code>{/dev/ttyACM0} です。
 
 シリアル受信できるかを確認します。
 
@@ -35,7 +35,7 @@ $ screen /dev/ttyACM0 115200
 
 シリアル受信ができていれば、結果がこのように表示されます。
 
-// TODO
+TODO 画像
 
 このデータをThingSpeakに送信しましょう。
 
@@ -49,7 +49,8 @@ $ screen /dev/ttyACM0 115200
 ThingSpeak側の準備ができたら、データ送信のPythonスクリプトを準備します。
 
 こちらのリポジトリにあるPythonスクリプトを使用します。
-https://github.com/Mutsumix/Seeeduino
+
+@<href>{https://github.com/Mutsumix/Seeeduino}
 
 ラズベリーパイ上の任意の場所でGitを使ってクローンします。
 ここではデスクトップ上に「Seeeduino」というフォルダを作成して、そこにクローンする想定で進めていきます。
@@ -61,18 +62,24 @@ git clone https://github.com/Mutsumix/Seeeduino.git
 設定ファイル（example.config.yml）をコピーして、config.ymlという名前で保存します。
 
 //cmd{
-cp Seeeduino/example.config.yml Seeeduino/config.yml
+cp thingspeak-uploader/example.config.yml thingspeak-uploader/config.yml
 //}
 
 config.ymlを開いて、ThingSpeakのAPIキーと、@<code>{ $ ls /dev/ttyACM* } で確認したデバイス名を設定します。
 
-実行に必要なPythonのパッケージをインストールします。
+//emlist[config.yml]{
+thingspeak_api_key: "YOUR_THINGSPEAK_API_KEY"
+serial_port: "/dev/ttyUSB0"
+baud_rate: 115200
+send_interval_minutes: 0.25
+
+次に実行に必要なPythonのパッケージをインストールします。
 
 //cmd{
 pip install pyserial pyyaml requests
 //}
 
-実行します。
+最後に、実行します。
 
 //cmd{
 python uploader.py
@@ -90,6 +97,8 @@ ThingSpeakでデータが受信できているのを確認できたら、最後�
 温度・湿度・CO2を設定したときと同様に、各センサーのデータをグラフに設定していきます。
 
 筆者はこのようにダッシュボードを作成しました。
+
+//image[seeeduino-dashboad][Grafanaダッシュボードのサンプル][scale=0.75]
 
 == まとめとさらなる活用について
 
