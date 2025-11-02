@@ -22,7 +22,7 @@ bookname: data-garden
 language: ja
 
 # 書名
-booktitle: {name: "データ菜園入門 データ菜園入門", file-as: "データサイエンニュウモン"}
+booktitle: {name: "データ菜園入門", file-as: "データサイエンニュウモン"}
 subtitle: {name: "見える化で楽しむデータ駆動家庭菜園", file-as: "ミエルカデタノシムデータクドウカテイサイエン"}
 # 著者名。「, 」で区切って複数指定できる
 aut: [{name: "Mutsumix", file-as: "ムツミックス"}]
