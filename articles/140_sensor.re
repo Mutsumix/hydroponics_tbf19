@@ -80,7 +80,7 @@ TODO 図
 
 //footnote[soldering][もっと正直に言うと、文系ソフトウェアエンジニアの自分にとって回路図や配線図がマニュアルに出てきた瞬間「自分とは関わりのない世界だ！」と脳が拒絶反応を示して激萎えしてしまいます。そんな自分でもセンサーでデータを取得したい！と言う願望を叶えてくれるのがSeeeduinoとSeeed社のセンサーたちだったんです。]
 
-=== 互換機 Seeeduino（シーデュイーノ）とは
+=== 互換機 Seeeduinoとは
 
 Arduino互換機のSeeeduinoについて説明します。
 
@@ -122,16 +122,16 @@ Groveは、Seeed Studio社が開発した統一規格のコネクタシステム
  * CO2センサー
  * 気圧センサー
  * 水位センサー
-などなど
+ * etc...
 
 すべて同じGroveケーブルで繋げるため、接続方式の違いを意識する必要がありません。
 これはマイコンの配線に悩まされた人間にとって、朗報です。
 
 Seeeduino Lotus はこのGroveコネクタを12個搭載しており、簡易さと拡張性の両立を実現しています。
-前置きとても長くなりましたが、ここまでが、Seeeduino Lotusをセンサーの取得に活用する理由です。
+前置きがとても長くなりましたが、ここまでが、Seeeduino Lotusをセンサーの取得に活用する理由です。
 
 次に購入品を紹介します。
-すべての購入品はSeeed StudioのECサイト（@<href>{https://jp.seeedstudio.com/, https://jp.seeedstudio.com/}）で購入できます。
+ほとんどの部品はSeeed StudioのECサイト（@<href>{https://jp.seeedstudio.com/, https://jp.seeedstudio.com/}）で購入できます。
 
 == 購入品一式
 
@@ -151,7 +151,7 @@ USB A-MicroB	1本	Amazon	¥500
 Seeeduino LotusはSeeeduino Lotus V1.1とSeeeduino Lotus Cortex-M0+ の2種類が販売されていますが、 Cortex-M0+ が本書で使用するボードです。
 公式のWikiに正確なスペック@<fn>{seeeduino_lotus_wiki}は記載されていますが、 Cortex-M0+ は V1.1 よりも性能が向上しており、本書で使用するボードはこちらになります。
 
-価格はすべて2025年11月1日時点の価格です。為替の影響を大きく受けるので、あくまで目安としてご覧ください。
+また価格はすべて2025年11月1日時点の価格です。為替の影響を大きく受けるので、あくまで目安としてご覧ください。
 もし、海外のECサイトで購入することに抵抗がある方は、国内のショップであるスイッチサイエンス、マルツオンライン、秋月電子、またはAmazonで一部製品は購入することが可能です。
 
 部品によっては公式サイトで入荷待ちとなっている場合もあるので、別のショップも組み合わせて購入することをおすすめします。
@@ -181,7 +181,7 @@ TODO 図
 
 //TODO 図
 
-== センサーデータ取得のプログラムのダウンロード
+== センサーデータ取得のプログラムのダウンロードと実行方法
 
 それでは、センサーデータを取得するプログラムを作成していきます。
 プログラムのボードへの反映には、専用のエディタであるArduino IDEを使用します。
@@ -204,7 +204,7 @@ Windows、macOSいずれでも構いません。OSに応じたインストーラ
 
 //TODO 図
 
-== Seeeduino用ボードパッケージを追加する
+=== Seeeduino用ボードパッケージを追加する
 
 Seeeduino Lotus Cortex M0+ は Arduino 互換機ですが、Arduino Uno とは製造元・チップ構成が異なります。
 そのため、Arduino IDE に Seeed 製ボードパッケージを追加する必要があります。
@@ -228,7 +228,7 @@ Seeeduino Lotus Cortex M0+ は Arduino 互換機ですが、Arduino Uno とは�
 
 これで Seeeduino Cortex M0+ 系のボードが Arduino IDE に追加されます。
 
-== Seeeduino Lotus Cortex M0+ をPCに接続する
+=== Seeeduino Lotus Cortex M0+ をPCに接続する
 
 Seeeduino Lotus Cortex M0+ を Micro USB ケーブルで PC に接続します。
 ケーブルは「データ通信対応」のものを必ず使用してください。
@@ -240,7 +240,7 @@ Windows では「COMx」（x は数字）、macOSやLinuxでは「/dev/cu.usbmod
 
 todo 画像
 
-== ボードとポートを設定する
+=== ボードとポートを設定する
 
 ボードとポート、紛らわしいですが別物ですね。この場合の@<b>{ボード}とは、Seeeduino基盤のことで、@<b>{ポート}とは、PCとボードを接続するための通信線のことです。
 
@@ -251,7 +251,7 @@ todo 画像
 
 TODO キャプチャ
 
-== 接続確認（Lチカ）
+=== 接続確認（Lチカ）
 
 動作確認のため、[ファイル] → [スケッチ例] → [01.Basics] → [Blink] を開いて書き込みます。
 
@@ -265,7 +265,7 @@ TODO キャプチャ
 TODO 図
 地味ですがまたたいています
 
-== センサーを接続する
+=== センサーを接続する
 
 ここから、Seeeduino Lotusに複数の環境センサーを接続してデータを取得します。
 紹介したセンサーすべてを接続したと想定して、センサーと接続ポートを表にまとめます。
@@ -298,17 +298,16 @@ GitHubからセンサーデータを取得するプログラムのソースコ�
 //TODO 多分ライブラリのダウンロードが必要
 
 //listnum[sensor_monitor][sensor_monitor.ino]{
-
-
-
+TODO ここはGitHubのリポジトリをエディタに貼り付けた画像に置き換える
 //}
 
 === 動作確認
 
 書き込み後、Arduino IDEのシリアルモニタ（115200 bps）を開きます。
 
-=== Sensor Monitor ===
+=== Sensor Monitor
 Temp: 24.6C | Water: 80% | Sound: 45.8 dB | Light: 324 lux
+
 Temp: 24.7C | Water: 79% | Sound: 47.2 dB | Light: 125 lux
 
 数値が周期的に更新されれば、すべてのセンサーが動作しています。
