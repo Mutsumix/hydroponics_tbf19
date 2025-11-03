@@ -92,7 +92,7 @@ curl --request GET 'https://api.switch-bot.com/v1.0/devices' \
 
 ここで取得したデバイス一覧の中から、CO2センサーの deviceId を確認してください。この deviceId を後ほどLambdaの環境変数に設定します。
 
-APIドキュメントの詳細はGitHubから確認できます。@<fn>{switchbot_api}
+SwitchBotのAPIドキュメントの詳細はGitHubから確認できます。@<fn>{switchbot_api}
 
 //footnote[switchbot_cloud_service][@<href>{https://blog.switchbot.jp/announcement/switchbot-app-9-0/}]
 //footnote[switchbot_api][@<href>{https://github.com/OpenWonderLabs/SwitchBotAPI#switchbotapi} SwitchBot API]
@@ -230,7 +230,7 @@ Lambda関数の設定画面の「環境変数」タブを選択し、「環境�
  * SWITCHBOT_TOKEN：SwitchBotの開発者向けオプションで「トークン」の項目で確認可能
  * SWITCHBOT_SECRET：SwitchBotの開発者向けオプションで「クライアントシークレット」の項目で確認可能
  * SWITCHBOT_DEVICE_ID：Curlコマンドで取得したCO2センサーの deviceId
- * THINGSPEAK_API_KEY：ThingSpeakのAPIキーの設定画面から確認可能
+ * THINGSPEAK_API_KEY：ThingSpeakのWrite API Key
 
 //image[aws_lambda_environment_variables_2][環境変数の設定値][scale=0.75]
 
