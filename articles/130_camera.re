@@ -481,7 +481,7 @@ VNC Viewerを使った方法で解説します。
  1. VNC ViewerでRaspberry Piに接続
  2. 操作用PCでダウンロードしたJSONファイルの内容をテキストエディタで開く
  3. 全選択してコピー
- 4. Raspberry Pi側でターミナルを開き：
+ 4. Raspberry Pi側でターミナルを開き、次のコマンドを実行
 
 //cmd{
 cd ~/Desktop/camera-project/google-photo-uploader
@@ -490,7 +490,7 @@ nano client_secrets.json
 //}
 
  1. 右クリックで貼り付け
- 2. `Ctrl + O`→`Enter`（保存）→`Ctrl + X`（終了）
+ 2. @<code>{Ctrl + O}→@<code>{Enter}（保存）→@<code>{Ctrl + X}（終了）
 
 慣れている方はSSHを使用してください。
 うまくできなかった方はUSB経由で`client_secrets.json`というファイル名にして、ラズパイのデスクトップ上の`google-photo-uploader`に保存しましょう。
@@ -546,7 +546,7 @@ Upload test successful!
 Test image uploaded to album: raspi-camera
 //}
 
-ブラウザでGoogleフォト@<href>{https://photos.google.com/} を開いて、raspi-cameraアルバムに写真がアップロードされているか確認してください。
+ブラウザでGoogleフォト（@<href>{https://photos.google.com/}）を開いて、raspi-cameraアルバムに写真がアップロードされているか確認してください。
 
 == 定期実行の設定
 
@@ -638,16 +638,12 @@ python google_photos.py
 ここまでの手順で、Raspberry Piが自動的に撮影・アップロードした写真は、Googleフォト上のアルバム（例：「raspi-camera」）に定期的に保存されています。
 最後に、これらの画像を使ってタイムラプス動画を作成してみましょう。
 
-Googleフォト（@<href>{https://photos.google.com/}）にアクセスします。
-
-自動アップロードされた画像が保存されているアルバムを開きます。
-
-タイムラプスに使いたい写真を複数選択します。
-（撮影日時が連続しているものを選ぶと自然な動画になります）
-
-右上の「＋作成」ボタンをクリックします。
-
-表示されるメニューから「アニメーション」を選択します。
+ * Googleフォト（@<href>{https://photos.google.com/}）にアクセスします。
+ * 自動アップロードされた画像が保存されているアルバムを開きます。
+ * タイムラプスに使いたい写真を複数選択します。
+  ** 撮影日時が連続しているものを選ぶと自然な動画になります
+ * 右上の「＋作成」ボタンをクリックします。
+ * 表示されるメニューから「アニメーション」を選択します。
 
 数秒ほど待つと、選択した画像をもとにアニメーション動画が自動生成されます。
 この動画はGoogleフォト上で再生・共有できるほか、必要に応じてダウンロードして編集ソフトで再加工することも可能です。
@@ -659,6 +655,6 @@ Googleフォト（@<href>{https://photos.google.com/}）にアクセスします
 == 参考資料・ソース
 
 この記事で紹介した、ラズベリーパイに市販のWebカメラを接続してGoogle フォトにアップロードするアイディアは、Udemyで公開されている「ラズベリーパイ（Raspberry Pi）と3Dプリンターで作って学ぶIoT～DIY型IoTキット作成講座～」(@<href>{https://t.co/hYOPOvTUa9}）という講座を大いに参考にさせていただきました。
-講師である佐々木 健介(@kensukesasawood)さんは、他にも農業とITを掛け合わせたユニークな講座を公開していてとても学びが多いです。読者の中で今回の記事が面白いと感じた方がいましたら、ぜひ本記事のネタ元である講座やその他の講座を視聴することをお勧めいたします。
+講師である佐々木 健介(@kensukesasawood)さんは、他にも農業とITを掛け合わせたユニークな講座を公開していてとても学びが多いです。本章の内容が面白いと感じた方がいましたら、ぜひ本記事のネタ元である講座やその他の講座を視聴することをお勧めいたします。
 
 //image[udemy-sasaki][Udemy講座はこちらから][scale=0.75]
