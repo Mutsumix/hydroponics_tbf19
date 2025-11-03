@@ -26,14 +26,7 @@
 
 == 用意するもの
 
-#@# //table[camera_device][今回用意するもの]{
-#@# 品目	個数	購入先	目安の価格
-#@# ------------------
-#@# ラズベリーパイ@<fn>{raspberry_pi}	1つ	スイッチサイエンス	¥11,220
-#@# Webカメラ	1つ	Amazon	¥2,480@<fn>{web_camera_C270} ~ ¥8,999@<fn>{web_camera_4k}
-#@# //}
-
-=== ハードウェア
+@<b>{ハードウェア}
 
 必ずしもこれが良い、というわけではありませんが、以下のもので動作検証をしています。
 
@@ -50,7 +43,7 @@
 //footnote[web_camera_4k][@<href>{https://amzn.asia/d/8sYe7tf} EMEET 4K Webカメラ]
 //footnote[web_camera_C270][@<href>{https://amzn.asia/d/bam9mhN} Logitech C270 なんの変哲もない一般的なWebカメラ]
 
-=== アカウント
+@<b>{アカウント}
 
  * Google アカウント（Google Photos用）
  * Google Cloud Platform（GCP）アカウント（無料枠で使用可能）
@@ -77,7 +70,9 @@ Google Photos Library APIと認可方式にはOAuth2.0を使用しています�
 
 ==== Raspberry Pi Imagerのダウンロード
 
-公式サイトからダウンロード：https://www.raspberrypi.com/software/
+公式サイトから使用しているOSにあったものをダウンロード：@<href>{https://www.raspberrypi.com/software/}
+
+//image[imager-download][Raspberry Pi Imagerのダウンロード画面][scale=0.75]
 
 ==== OSの書き込み
 
@@ -227,7 +222,7 @@ lsusb
 v4l2-ctl --list-devices
 //}
 
-通常、最初に接続したUSBカメラが`/dev/video0`として認識されます。複数のカメラを接続した場合はvideo1、video2と番号が増えます。再起動やUSBの差し直しでこの番号はリセットされます。
+通常、最初に接続したUSBカメラが@<code>{/dev/video0}として認識されます。複数のカメラを接続した場合はvideo1、video2と番号が増えます。再起動やUSBの差し直しでこの番号はリセットされます。
 
 次にこのコマンドでカメラの対応解像度を確認してください。
 
@@ -263,7 +258,7 @@ GitHubから著者の作成したプログラムをダウンロードします�
 //cmd{
 # 今からターミナルを開く場合はcdコマンドで、実行場所を先ほど作成したフォルダに移動します
 cd ~/Desktop/camera-project
-git clone <https://github.com/Mutsumix/google-photo-uploader.git>
+git clone https://github.com/Mutsumix/google-photo-uploader.git
 cd google-photo-uploader
 //}
 
@@ -335,7 +330,6 @@ notifications:
 //cmd{
 cd ~/Desktop/camera-project/google-photo-uploader
 python camera_module.py
-
 //}
 
 このコマンドが成功すれば、カメラで撮影した画像が`photos/`フォルダに保存されます。
@@ -356,7 +350,6 @@ config.yamlの以下の値を調整してください：
 camera:
   settings:
     focus: 30  # 0-255の範囲で調整（大きいほど遠くにフォーカス）
-
 //}
 
 調整後、再度@<code>{python camera_module.py}で撮影して確認してください。
@@ -368,15 +361,29 @@ camera:
 
 === GCPプロジェクトの作成
 
- 1. 操作用PCのブラウザで https://console.cloud.google.com/ にアクセス
+ 1. 操作用PCのブラウザで @<href>{https://console.cloud.google.com/, Google Cloud Console} にアクセス
+
+//image[gcp_project_create][GCPプロジェクトの作成画面][scale=0.75]
+
  2. Googleアカウントでログイン（初回は利用規約に同意）
+
+//image[gcp_project_create_2][GCPプロジェクトの作成画面2][scale=0.75]
+//image[gcp_project_create_3][GCPプロジェクトの作成画面3][scale=0.75]
+
  3. 画面上部の「プロジェクトを選択」（または「プロジェクト名」）をクリック
  1. 右上の「新しいプロジェクト」をクリック
+
+//image[gcp_project_create_4][GCPプロジェクトの作成画面4][scale=0.75]
+
  1.  プロジェクト名を入力（例: raspi-camera-project）
+
+//image[gcp_project_create_5][GCPプロジェクトの作成画面5][scale=0.75]
+
  1. 「作成」をクリック（作成に30秒ほどかかります）
  1. 通知領域の「プロジェクトを選択」から作成したプロジェクトを選択
 
 GCPアカウントがGoogleから割り当てられた「家」だとすると、GCPプロジェクトは、Googleのクラウドサービスを利用するための「部屋」のようなものです。一つのプロジェクトで複数のAPI（例えるなら「家具」）を管理できます。
+GCPでは2025年5月13日から多要素認証（MFA）とも呼ばれる 2 段階認証プロセス（2SV）の適用を開始しました。Googleアカウントのセキュリティ設定に移動して、2 段階認証プロセスを有効にしてください。
 
 === Photos Library APIの有効化
 
@@ -384,29 +391,36 @@ GCPアカウントがGoogleから割り当てられた「家」だとすると�
 
 //footnote[api][APIについては@<chapref>{120_dashboard}で解説しています]
 
-1. 左上のハンバーガーメニュー（三本線）→「APIとサービス」→「ライブラリ」
-2. 検索窓に「Photos Library API」と入力
-3. 「Photos Library API」を選択
-4. 「有効にする」をクリック
+ 1. 左上のハンバーガーメニュー（三本線）→「APIとサービス」→「ライブラリ」
+
+//image[gcp_project_create_6][GCPプロジェクトの作成画面6][scale=0.75]
+
+ 2. 検索窓に「Photos Library API」と入力
+ 3. 「Photos Library API」を選択
+ 4. 「有効にする」をクリック
+
+//image[gcp_project_create_7][GCPプロジェクトの作成画面7][scale=0.75]
 
 === OAuth同意画面の設定
 
 OAuthの設定をしていきます。@<fn>{oauth}
 
-//footnote[oauth][OAuthとは：OAuth（オーオース）は、アプリがあなたの代わりにGoogle Photosにアクセスするための安全な認証の仕組みです。ここでは、ユーザーに表示される許可画面（「このアプリにGoogle Photosへのアクセスを許可しますか？」など）の設定を行います。]
+//footnote[oauth][OAuth（オーオース）は、アプリがあなたの代わりにGoogle Photosにアクセスするための安全な認証の仕組みです。ここでは、ユーザーに表示される許可画面（「このアプリにGoogle Photosへのアクセスを許可しますか？」など）の設定を行います。]
 
- 1. 左メニュー「APIとサービス」→「OAuth同意画面」
- 2. User Type: 「外部」を選択→「作成」
+ * 左メニュー「APIとサービス」→「OAuth同意画面」→ 開始ボタンをクリック
 
-「外部」を選択しても、後でテストユーザーとして自分だけを追加するため、自分以外は使用できません。
+//image[gcp_project_create_8][GCPプロジェクトの作成画面8][scale=0.75]
 
  * アプリ情報入力：
  ** アプリ名: 任意（例: Raspi Camera Uploader）
  ** ユーザーサポートメール: 自分のメールアドレスを選択
- ** アプリのロゴ: スキップ可
- ** アプリドメイン: 全て空欄でOK
- ** デベロッパーの連絡先情報: 自分のメールアドレスを入力
+//image[gcp_project_create_9][GCPプロジェクトの作成画面9][scale=0.75] 
+
+ ** 対象：外部@<fn>{external}
+ ** 連絡先情報: 自分のメールアドレスを入力
  *「保存して次へ」
+
+//footnote[external][「外部」を選択しても、後でテストユーザーとして自分だけを追加するため、自分以外は使用できません。]
 
 ==== スコープの追加
 
@@ -415,11 +429,17 @@ OAuthの設定をしていきます。@<fn>{oauth}
 今回はアルバムに画像が保存できればそれで良いので、次のような設定をします。
 
  * 「スコープを追加または削除」をクリック
+
+//image[gcp_project_create_10][GCPプロジェクトの作成画面10][scale=0.75]
+
  * フィルタに「photos」と入力
  * 以下の2つにチェック：
  ** https://www.googleapis.com/auth/photoslibrary
  ** https://www.googleapis.com/auth/photoslibrary.appendonly
- * 「更新」→「保存して次へ」
+
+//image[gcp_project_create_11][GCPプロジェクトの作成画面11][scale=0.75]
+  * 「更新」→「Save」
+//image[gcp_project_create_12][GCPプロジェクトの作成画面12][scale=0.75]
 
 ==== テストユーザーの追加
 
@@ -427,25 +447,30 @@ OAuthの設定をしていきます。@<fn>{oauth}
 今回は自分だけが実行できればいいので、自分だけを追加します。
 
  1. 「ADD USERS」をクリック
+//image[gcp_project_create_13][GCPプロジェクトの作成画面13][scale=0.75]
  2. 自分のGoogleアカウントのメールアドレスを入力
- 3. 「追加」
- 4. 「保存して次へ」
- 5. 「ダッシュボードに戻る」
+//image[gcp_project_create_14][GCPプロジェクトの作成画面14][scale=0.75]
+ 3. 「保存」
+ 5. ダッシュボードに戻る
 
 ==== OAuth認証情報の作成
 
 ここでは、アプリがGoogleと通信するための「鍵」を作成します。先ほど設定した「OAuth同意画面」はユーザーに見せる画面の設定で、こちらは実際の通信に使う認証情報（client_secrets.json）を作成します。
 
  1. 左メニュー「認証情報」
+//image[gcp_project_create_15][GCPプロジェクトの作成画面15][scale=0.75]
  2. 上部の「＋認証情報を作成」→「OAuthクライアントID」
+//image[gcp_project_create_16][GCPプロジェクトの作成画面16][scale=0.75]
  3. アプリケーションの種類: 「デスクトップアプリ」を選択
  4. 名前: 任意（例: Raspi Camera Client）
+//image[gcp_project_create_17][GCPプロジェクトの作成画面17][scale=0.75]
  5. 「作成」
 
 ==== 認証情報のダウンロード
 
  * 「OAuth 2.0 クライアントID」の一覧に作成した認証情報が表示される
  * 右端の「ダウンロード」アイコン（↓矢印）をクリック
+//image[gcp_project_create_18][GCPプロジェクトの作成画面18][scale=0.75]
  * JSONファイルがダウンロードされる（ファイル名はclient_secret_xxxxx.jsonのような形式）
 
 === ファイルの配置
@@ -495,12 +520,6 @@ Please visit this URL to authorize this application: <https://accounts.google.co
  4. 「このアプリは確認されていません」という警告が表示されます@<fn>{oauth_warning}
 
 //footnote[oauth_warning][なぜこの警告が出るのかというと、Googleの審査を受けていない個人開発アプリだからです。審査は数週間かかり、商用アプリでなければ不要です]
-
-#@# **なぜ進めても問題ないのか？**
-
-#@# - 自分自身が作成したGCPプロジェクトで
-#@# - テストユーザーに自分だけを登録しています
-#@# - 悪意のある第三者が作ったアプリではありません
 
  1. 「詳細」をクリック→「[アプリ名]（安全ではないページ）に移動」をクリック
  2. 権限の許可画面で「続行」または「許可」
