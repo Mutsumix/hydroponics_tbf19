@@ -497,6 +497,8 @@ OAuthの設定をしていきます。@<fn>{oauth}
 //image[gcp_project_create_18][GCPプロジェクトの作成画面18][scale=0.75]
  * JSONファイルがダウンロードされる（ファイル名はclient_secret_xxxxx.jsonのような形式）
 
+== Raspberry PiからGCPへの認証と撮影画像のアップロード
+
 === ファイルの配置
 
 ダウンロードしたファイルをラズパイ上に配置しましょう
@@ -510,11 +512,14 @@ VNC Viewerを使った方法で解説します。
 //cmd{
 cd ~/Desktop/camera-project/google-photo-uploader
 nano client_secrets.json
-
 //}
+
+//image[client_secrets_json][client_secrets.jsonの内容][scale=0.75]
 
  1. 右クリックで貼り付け
  2. @<code>{Ctrl + O}→@<code>{Enter}（保存）→@<code>{Ctrl + X}（終了）
+
+//image[nano_client_secrets_json][nanoコマンドでclient_secrets.jsonを作成し貼り付け][scale=0.75]
 
 慣れている方はSSHを使用してください。
 うまくできなかった方はUSB経由で`client_secrets.json`というファイル名にして、ラズパイのデスクトップ上の`google-photo-uploader`に保存しましょう。
@@ -534,43 +539,76 @@ python setup_auth.py --test-camera --test-upload
 
 ターミナルに認証用のURLが表示されます：
 
+
+//image[setup_auth_py][setup_auth.pyの実行結果][scale=0.75]
+
 //cmd{
 Please visit this URL to authorize this application: <https://accounts.google.com/o/oauth2/auth?.>..
 //}
 
- 1. このURLをコピー（VNC Viewerならマウスでドラッグして右クリック→コピー）
- 2. ブラウザで開く（Raspberry Pi上またはVNC接続元のPC）
- 3. Googleアカウントでログイン
- 4. 「このアプリは確認されていません」という警告が表示されます@<fn>{oauth_warning}
+ * このURLをコピー（VNC Viewerならマウスでドラッグして右クリック→URLをコピー→ブラウザに貼り付け、もしくはOpen UR+）
+ * ブラウザで開く（Raspberry Pi上またはVNC接続元のPC）
+ * Googleアカウントでログイン
+ //image[login_google_account][Googleアカウントでログイン][scale=0.75]
+ * 「このアプリはGoogleで確認されていません」という警告が表示されます@<fn>{oauth_warning}
+ //image[oauth_warning][OAuth警告画面][scale=0.75]
 
 //footnote[oauth_warning][なぜこの警告が出るのかというと、Googleの審査を受けていない個人開発アプリだからです。審査は数週間かかり、商用アプリでなければ不要です]
 
- 1. 「詳細」をクリック→「[アプリ名]（安全ではないページ）に移動」をクリック
- 2. 権限の許可画面で「続行」または「許可」
- 3. 認証コードが表示されるのでコピー
- 4. ターミナルに戻って貼り付け→`Enter`
+ * 一瞬ギョッとしてしまいますが、落ち着いて「続行」をクリック
+ * 権限の許可画面で「すべて選択」→「続行」を選択
 
-認証が成功すると`photo_token.json`という名前でトークンが保存され、次回以降は自動的に認証されます。
-ただし、テストモードだと、1週間で認証が切れてしまいます。
-そのため、photo_token.jsonを削除し、再度認証の作業をしなくてはなりませんので注意しましょう。
+//image[select_all_permissions][すべて選択して続行][scale=0.75]
+
+ * 「The authentication flow has completed. You may close this window.」というあり得ないくらい素っ気ない画面が表示されれば成功です。
+ //image[authentication_flow_completed][認証成功画面][scale=0.75]
+
+ * ターミナル上でプログラムが続行されていることを確認してください。
+
+ //image[terminal_running][プログラムが続行され完了した画面][scale=0.75]
+
+#@#  * 認証コードが表示されるのでコピー
+#@#  * ターミナルに戻って貼り付け→`Enter`
+
+認証が成功すると`photo_token.json`という名前でトークンが保存され、次回以降は自動的に認証されます。@<fn>{photo_token_json}
+
+//image[photo_token_json][photo_token.jsonの内容][scale=0.75]
+
+//footnote[photo_token_json][ただし、テストモードだと、1週間で認証が切れてしまいます。そのため、photo_token.jsonを削除し、再度認証の作業をしなくてはなりませんので注意しましょう。]
 
 === 動作確認
 
 認証が成功すると、自動的に次のことが起こります
 
- 1. カメラで撮影（`test_upload.jpg`として保存）
- 2. Google Photosへアップロード
- 3. `raspi-camera`アルバムの作成（初回のみ）
+ * 撮影した画像がGoogle Photosへアップロードされる
+ * `raspi-camera`アルバムの作成（初回のみ）
 
 ターミナルに以下のようなメッセージが表示されれば成功：
 
 //cmd{
-Camera test successful!
-Upload test successful!
-Test image uploaded to album: raspi-camera
+カメラテスト撮影を実行します...
+2025-11-05 01:51:48,883 - camera_module - INFO - camera module is starting...
+2025-11-05 01:51:49,277 - camera_module - INFO - Applying EMEET-specific settings
+2025-11-05 01:51:50,030 - camera_module - INFO - Settings: MJPG, 3840x2160, 30fps
+2025-11-05 01:51:52,784 - camera_module - INFO - Photo saved: photos/setup_test.jpg
+OK: カメラテスト撮影完了: photos/setup_test.jpg
+テスト画像をGoogle Photosにアップロードします...
+2025-11-05 01:51:59,103 - google_photos - INFO - Succeeded upload of image to photo library. status: {'message': 'Success'}
+OK: テスト画像アップロード完了
+INFO: テスト画像を削除しました
+
+セットアップ完了
+   これで 'python main.py' を実行できます。
+
+次のステップ:
+   1. 設定確認: vi config.yaml
+   2. メイン実行: python main.py
+   3. ログ確認: tail -f logs/main.log
 //}
 
 ブラウザでGoogleフォト（@<href>{https://photos.google.com/}）を開いて、raspi-cameraアルバムに写真がアップロードされているか確認してください。
+
+//image[google_photos_album][Googleフォトのアルバム画面][scale=0.75]
 
 == 定期実行の設定
 
@@ -578,15 +616,12 @@ Test image uploaded to album: raspi-camera
 
 //emlist[config.yml]{
 scheduler:
-  day_of_week: "mon-fri"  # 月〜金のみ撮影
-  at_time: "12:00"        # 毎日12時に撮影
+  day_of_week: ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]  # 月〜金のみ撮影
+  at_time: ["06:00:00", "12:00:00", "18:00:00"]        # 毎日6時、12時、18時に撮影
 
 //}
 
- * day_of_weekの指定方法：
- ** mon-sun: 毎日
- ** mon-fri: 平日のみ
- ** mon,wed,fri: 月・水・金のみ
+ * at_timeの指定方法：24時間表記で指定します。朝6時を指定する場合は、"6:00:00"ではなく"06:00:00"と指定しないとエラーになりますのでご注意ください。
 
 === プログラムの起動
 
@@ -632,7 +667,7 @@ v4l2-ctl -d /dev/video0 --list-formats-ext | grep MJPG
 お使いのカメラの対応解像度を確認し、`config.yaml`で設定してください：
 
  * Logicool C270: 最大1280x720（または1280x960）
- * EMEET S600: 最大1920x1080
+ * EMEET S600: 最大3840x2160
 
 //emlistnum[config.yml]{
 camera:
@@ -669,8 +704,13 @@ python google_photos.py
  * 右上の「＋作成」ボタンをクリックします。
  * 表示されるメニューから「アニメーション」を選択します。
 
-数秒ほど待つと、選択した画像をもとにアニメーション動画が自動生成されます。
+//image[google_photos_album_create_animation_menu][写真を選択し、アニメーションを作成][scale=0.75]
+//image[google_photos_album_create_animation_menu_animation][アニメーション作成中][scale=0.75]
+
+数秒ほど待つと、選択した画像をもとにアニメーション動画が自動生成されます。@<fn>{google_photos_album_create_animation_menu_animation}
 この動画はGoogleフォト上で再生・共有できるほか、必要に応じてダウンロードして編集ソフトで再加工することも可能です。
+
+//footnote[google_photos_album_create_animation_menu_animation][書籍では動画をお見せできないのが残念です]
 
 連日撮影した植物の成長をこうして動画にまとめると、時間の流れが一目でわかります。
 純粋に見ていて楽しいですし、「葉が大きく成長するタイミング」や「日照時間や温度・湿度による葉の動きの違い」など連続的な成長の様子から多くの気づきが得られるのではないでしょうか。
