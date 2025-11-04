@@ -66,7 +66,7 @@ Google Photos Library APIと認可方式にはOAuth2.0を使用しています�
 
 すでに動作するRaspberry Piが手元にある場合はこの手順はスキップしてください。
 
-=== Raspberry Pi OSのインストール
+=== Raspberry Pi の初期設定（インストール〜起動）
 
 ==== Raspberry Pi Imagerのダウンロード
 
@@ -121,9 +121,9 @@ Google Photos Library APIと認可方式にはOAuth2.0を使用しています�
 
 //footnote[first_boot][初回起動は2-3分かかります。デスクトップ画面が表示されれば成功です。]
 
-=== 接続確認
+=== Raspberry Pi の初期設定（Wi-Fi接続と外部操作の設定）
 
-==== 1. Wi-Fi接続の確認
+==== Wi-Fi接続の確認
 
 画面右上のWi-Fiアイコンで接続状況を確認してください。
 もしWi-Fiに接続されていない場合は次の作業を行なってください
@@ -132,7 +132,7 @@ Google Photos Library APIと認可方式にはOAuth2.0を使用しています�
  2. 接続先SSIDを選択
  3. パスワードを入力
 
-==== 2. Raspberry Pi の外部からの操作設定
+==== Raspberry Pi の外部からの操作設定
 
 @<b>{方法1. VNC Serverの有効化（推奨）}
 
@@ -166,16 +166,18 @@ VNC Viewerを使うと、操作用PCからコピー＆ペーストができる�
 
 //cmd{
 ssh pi@192.168.1.10
-# IPアドレスは先ほど確認したものに置き換えてください
+# IPアドレスは後ほど確認するものに置き換えてください
 //}
 
 パスワードを入力してログインします。
 
-==== ３. IPアドレスの確認
+==== IPアドレスの確認
 
 VNC Serverを有効化すると、画面右上にVNCアイコンが表示されます。
 このアイコンをクリックすると、Raspberry PiのIPアドレスが表示されます。
 このアドレスをメモしておいてください。後で操作用PCからVNC接続やSSH接続に使用します。
+
+//image[ip_address][IPアドレスの確認][scale=0.75]
 
 コマンドを打つことで確認も可能です。
 デスクトップ上部のメニューバーから「アクセサリ」→「ターミナル」を開き、以下を実行：
@@ -188,7 +190,7 @@ hostname -I
 
 //footnote[ip_address][IPアドレスは、ネットワーク上でRaspberry Piを識別するための番号です。]
 
-==== 4. システムの更新
+==== システムの更新
 
 ターミナルで以下を実行：
 
@@ -200,7 +202,9 @@ sudoは管理者権限で実行するコマンド、aptはソフトウェアを�
 初回は実行に10-20分かかる場合があります。
 ラズベリーパイを触っていると、そんなつもりじゃないのにlinuxのコマンドをどんどん覚えていきます。
 
-==== 5. 必要なツールのインストール
+=== プログラムの用意と撮影までの流れ
+
+==== 必要なツールのインストール
 
 「v4l-utils」はカメラの認識確認に使うツールです。カメラの操作に必要なので次のコマンドでインストールします。@<fn>{v4l_utils}
 
@@ -210,7 +214,9 @@ sudo apt install -y v4l-utils
 
 //footnote[v4l_utils][OSがWindowsやMacだと、何かしらのソフトはインストーラーをダウンロードして実行して、開かれたウィンドウをOKしていって...といった手順でインストールをしますが、linuxの派生OSであるRaspberry Pi OSでは、コマンドを打つことで必要なツールをインストールしていきます。]
 
-==== 6. カメラの接続と確認
+==== カメラの接続と確認
+
+カメラの設定をしていきます。本書ではLogicool C270を使う想定で説明をしていきます。
 
  1. WebカメラをRaspberry PiのUSBポートに接続
  2. ターミナルで認識確認
@@ -222,7 +228,10 @@ lsusb
 v4l2-ctl --list-devices
 //}
 
-通常、最初に接続したUSBカメラが@<code>{/dev/video0}として認識されます。複数のカメラを接続した場合はvideo1、video2と番号が増えます。再起動やUSBの差し直しでこの番号はリセットされます。
+//image[lsusb_list][lsusbの実行結果の例][scale=0.75]
+
+通常、最初に接続したUSBカメラが@<code>{/dev/video0}を含むデバイスとして認識されます。
+複数のカメラを接続した場合はvideo1、video2と番号が増えます。再起動やUSBの差し直しでこの番号はリセットされます。
 
 次にこのコマンドでカメラの対応解像度を確認してください。
 
@@ -231,12 +240,15 @@ v4l2-ctl --list-devices
 v4l2-ctl -d /dev/video0 --list-formats-ext
 //}
 
- * EMEET S600: MJPG 1920x1080対応
- * Logicool C270: MJPG 1280x720または1280x960が最大
+//image[v4l2-ctl_list-devices][v4l2-ctl --list-devicesの実行結果の例][scale=0.75]
 
-=== 作業フォルダの準備とプログラムの取得
+このコマンドの実行結果から、カメラの対応解像度とフォーマットを確認できます。
+ * Logicool C270: MJPG 1280x960が最大
+ * EMEET S600: MJPG 3840x2160が最大
 
-==== 1. デスクトップに作業フォルダを作成
+#@# === 作業フォルダの準備とプログラムの取得
+
+==== デスクトップに作業フォルダを作成
 
 デスクトップ上にcamera-projectという名前でフォルダを作り、そこでプログラムに関する作業をします。
 コマンドでやってみたい方は、次のコマンドターミナル上で実行してください。
@@ -247,7 +259,9 @@ mkdir camera-project
 cd camera-project
 //}
 
-==== 2. GitHubからプログラムを取得
+//image[mkdir_camera-project][デスクトップに作業フォルダを作成][scale=0.75]
+
+==== GitHubからプログラムを取得
 
 GitHubから著者の作成したプログラムをダウンロードします。
 
@@ -262,17 +276,20 @@ git clone https://github.com/Mutsumix/google-photo-uploader.git
 cd google-photo-uploader
 //}
 
+//image[git_clone][git cloneの実行結果][scale=0.75]
+
 git cloneはGitHub上のプログラムをダウンロードするコマンドです。実行後、camera-projectフォルダの中にgoogle-photo-uploaderフォルダが作成されます。
 
-==== 3. 必要なPythonパッケージのインストール
+==== 必要なPythonパッケージのインストール
 
 //cmd{
-pip install -r requirements.txt --break-system-packages
+pip install -r requirements.txt
 //}
 
-requirements.txtには、プログラムの動作に必要な部品（ライブラリ）のリストが記載されています。一つひとつインストールすることもできますが、このコマンドで一括インストールされます。インストールには数分かかります。
+requirements.txtには、プログラムの動作に必要な部品（ライブラリ）のリストが記載されています。一つひとつインストールすることもできますが、このコマンドで一括インストールされます。
+インストールには数分から数時間かかる場合があります。気長にお待ちください。
 
-==== 4. 設定ファイルの準備
+==== 設定ファイルの準備
 
 設定ファイルを作成します。
 
@@ -286,46 +303,35 @@ cp config.sample.yaml config.yaml
 nano config.yaml
 //}
 
-以下のように設定：
+以下のように設定します。
 
 //emlist[config.yaml]{
 camera:
   use: true
   photo_dir: "photos"
   settings:
-    width: 1280
-    height: 720
-    fourcc: "MJPG"
+    camera_model: null  # "EMEET"でEMEET専用設定、nullでデフォルト（C270等）
+    width: 1920  # C270最大:1280x960、EMEET最大:1920x1080
+    height: 1080
+    fourcc: "MJPG"  # MJPG:圧縮形式（推奨）、YUYV:非圧縮
     fps: 30
-    focus: 30
+    focus: 500  # EMEETのみ有効。範囲0-1023: 0=最近距離、400-600=室内3-5m、1023=無限遠
   scheduler:
-    day_of_week: "mon-sun"
-    at_time: "09:00"
-
-google_photos:
-  use: true
-  client_secrets_path: "client_secrets.json"
-  token_path: "photo_token.json"
-  album_title: "raspi-camera"
-
-notifications:
-  aws_sns:
-    use: false
-
+    day_of_week: ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+    at_time: ["06:00:00", "12:00:00", "18:00:00"]
 //}
 
  * album_titleは任意の名前に変更可能です。Google Photosに自動作成されるアルバム名になります
+ * day_of_weekで撮影曜日を指定できます。
  * at_timeで撮影時刻を設定できます（24時間表記）
- * day_of_weekで撮影曜日を指定できます（mon-sunは毎日）
- * `width`と`height`はお使いのカメラの対応解像度に合わせてください（C270の場合は1280x720、S600の場合は1920x1080）
+ * `width`と`height`はお使いのカメラの対応解像度に合わせてください（C270の場合は1280x960、EMEET S600の場合は3840x2160）
+ * notificationsは通知設定です。今回は使用しませんので、falseにしてください。
 
 編集後、@<code>{Ctrl + O}→@<code>{Enter}（保存）→@<code>{Ctrl + X}（終了）の順で操作をしてファイルを更新します。
 
-=== カメラのテスト撮影
+==== テスト撮影の実行
 
-カメラが正常に動作するか確認します。
-
-==== 1. テスト撮影の実行
+次のコマンドを実行して、カメラが正常に動作するか確認します。
 
 //cmd{
 cd ~/Desktop/camera-project/google-photo-uploader
@@ -334,25 +340,44 @@ python camera_module.py
 
 このコマンドが成功すれば、カメラで撮影した画像が`photos/`フォルダに保存されます。
 
-==== 2. 撮影結果の確認
+
+==== 撮影結果の確認
 
 ファイルマネージャーで@<code>{~/Desktop/camera-project/google-photo-uploader/photos/}を開き、撮影された画像を確認してください。
 
 画像が正常に保存されていれば、カメラの設定は完了です。
 
-==== 3. トラブルシューティング
+//image[camera_module_py][camera_module.pyの実行結果][scale=0.75]
 
-@<b>{画像が暗い、ぼやけている場合：}
+==== 撮影のトラブルシューティング
 
-config.yamlの以下の値を調整してください：
+@<b>{EMEETカメラで画像がぼやけている場合：}
+
+config.yamlのfocus値を調整してください：
 
 //emlist[config.yaml]{
 camera:
   settings:
-    focus: 30  # 0-255の範囲で調整（大きいほど遠くにフォーカス）
+    camera_model: "EMEET"  # EMEET使用時は必須
+    focus: 500  # 0-1023の範囲で調整: 0=最近距離、400-600=室内3-5m、1023=無限遠
 //}
 
 調整後、再度@<code>{python camera_module.py}で撮影して確認してください。
+50-100ずつ変更して最適な値を見つけてください。
+
+@<b>{画像が暗い場合：}
+
+camera_module.pyのBRIGHTNESS値を直接変更する必要があります：
+
+//emlist[camera_module.py]{
+cap.set(cv2.CAP_PROP_BRIGHTNESS, 128)  # デフォルトは128、暗い場合は150-200に増やす
+//}
+
+@<b>{C270でピントが合わない場合：}
+
+C270は固定フォーカスのため、ソフトウェアから調整できません。
+カメラを分解してレンズのフォーカスリングを物理的に調整する必要があります。
+//}
 
 == クラウド側（Google Cloud Platform）の設定
 
@@ -445,25 +470,25 @@ OAuthの設定をしていきます。@<fn>{oauth}
 テストユーザーに登録したアカウントだけがこのアプリを使用できます。自分だけを追加すれば、他の人は使用できません。
 今回は自分だけが実行できればいいので、自分だけを追加します。
 
- 1. 「ADD USERS」をクリック
+ * 「ADD USERS」をクリック
 //image[gcp_project_create_13][GCPプロジェクトの作成画面13][scale=0.75]
- 2. 自分のGoogleアカウントのメールアドレスを入力
+ * 自分のGoogleアカウントのメールアドレスを入力
 //image[gcp_project_create_14][GCPプロジェクトの作成画面14][scale=0.75]
- 3. 「保存」
- 5. ダッシュボードに戻る
+ * 「保存」
+ * ダッシュボードに戻る
 
 ==== OAuth認証情報の作成
 
 ここでは、アプリがGoogleと通信するための「鍵」を作成します。先ほど設定した「OAuth同意画面」はユーザーに見せる画面の設定で、こちらは実際の通信に使う認証情報（client_secrets.json）を作成します。
 
- 1. 左メニュー「認証情報」
+ * 左メニュー「認証情報」
 //image[gcp_project_create_15][GCPプロジェクトの作成画面15][scale=0.75]
- 2. 上部の「＋認証情報を作成」→「OAuthクライアントID」
+ * 上部の「＋認証情報を作成」→「OAuthクライアントID」
 //image[gcp_project_create_16][GCPプロジェクトの作成画面16][scale=0.75]
- 3. アプリケーションの種類: 「デスクトップアプリ」を選択
- 4. 名前: 任意（例: Raspi Camera Client）
+ * アプリケーションの種類: 「デスクトップアプリ」を選択
+ * 名前: 任意（例: Raspi Camera Client）
 //image[gcp_project_create_17][GCPプロジェクトの作成画面17][scale=0.75]
- 5. 「作成」
+ * 「作成」
 
 ==== 認証情報のダウンロード
 
