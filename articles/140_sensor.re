@@ -29,6 +29,8 @@ Raspberry PiとArduino（およびその互換機であるSeeeduino）は、ど�
 見た目は似ていますが、内部の仕組みと得意分野はまったく異なります。
 この違いを理解しておくと、「なぜArduino系がセンサーに向いているのか」「なぜラズベリーパイが手元にあるのにそれで全部済ませないのか」が理解できます。
 
+//image[arduino_uno][Arduinoシリーズ、Unoの外観][scale=0.5]
+
 === Arduino系は電圧と信号の扱いがシンプル
 
 Arduino系ボードは、センサーを直接つなぐことを前提に設計されています。
@@ -63,20 +65,23 @@ Arduino系は電源を入れるだけですぐに書き込んだプログラム�
 
 === Grove規格で配線トラブルを減らせる
 
+
 センサーを複数扱うと、電源（VCC・GND）や信号線の取り回しで配線が複雑になりがちです。
 マイコンを使った指南書や解説ブログには必ず、「ブレッドボード」、「ジャンパーワイヤ」というものが出てきます。
 
-TODO 図
+//image[board_and_wire][ブレッドボードとジャンパーワイヤ][scale=0.75]
 
 ジャンパーワイヤを使ったブレッドボード配線は学習には良いのですが、接触不良や挿し間違いが起きやすく、初心者にとってはトラブルの原因になりやすい部分です。
-初心者がはんだ付けや配線の間違いで詰まってしまった場合、周りに電子工作に詳しい人がいないと、解決ができず学習が止まってしまい、徒労感と挫折感だけが残ってしまうことがあります。
+また、ものによっては半田付けの必要があったりします。初心者がはんだ付けや配線の間違いで詰まってしまった場合、周りに電子工作に詳しい人がいないと、解決ができず学習が止まってしまい、徒労感と挫折感だけが残ってしまうことがあります。
 本書ではそういったことが起きないように、できるだけシンプルな構成でセンサーデータを取得できるような機器、Seeeduino Lotus を選定しました。@<fn>{soldering}
+
+//image[seeeduino_lotus][Seeeduino Lotus][scale=0.75]
 
 Seeeduinoシリーズでは、配線問題を解決するためにGroveコネクタが採用されています。
 Groveは4ピンの専用ケーブルで、センサーを差し込むだけで接続できる仕組みです。
 電源と信号線の配線を自動で正しくまとめてくれるため、間違いを最小限に抑えながら安全に実験できます。
 
-TODO 図
+//image[grove_cable][Groveケーブル][scale=0.75]
 
 //footnote[soldering][もっと正直に言うと、文系ソフトウェアエンジニアの自分にとって回路図や配線図がマニュアルに出てきた瞬間「自分とは関わりのない世界だ！」と脳が拒絶反応を示して激萎えしてしまいます。そんな自分でもセンサーでデータを取得したい！と言う願望を叶えてくれるのがSeeeduinoとSeeed社のセンサーたちだったんです。]
 
@@ -111,8 +116,6 @@ Groveは、Seeed Studio社が開発した統一規格のコネクタシステム
 この形状であれば間違った挿し方はできません（挿しの甘さには注意）。
 さらに見た目がすっきりして取り回しがしやすいので、栽培用の容器やプランターの近くに置いたとしても違和感が少なくなります。
 
-// TODO 違和感ゼロの図
-
 また、@<href>{https://jp.seeedstudio.com/, Seeed Studio社のECサイト}では、Groveコネクタ対応のセンサーモジュールを数多く販売しています。
 たとえば次のような豊富なセンサーの中から、栽培に必要なものを選ぶことができます。
 
@@ -145,11 +148,14 @@ Seeeduino Lotus Cortex M0+@<fn>{seeeduino_lotus}	1つ	Seeed Studio	¥1,509
 騒音センサー@<fn>{volume_sensor}	1つ	Seeed Studio	¥824
 水位センサー@<fn>{water_level_sensor}	1つ	Seeed Studio	¥1,159
 LCD液晶ディスプレイ（オプション）@<fn>{lcd_display}	1つ	Seeed Studio	¥1,080
-USB A-MicroB	1本	Amazon	¥500
+USBケーブル（USB2.0 Aオス-マイクロBオス）	1本	Amazon	¥500
 //}
 
 Seeeduino LotusはSeeeduino Lotus V1.1とSeeeduino Lotus Cortex-M0+ の2種類が販売されていますが、 Cortex-M0+ が本書で使用するボードです。
 公式のWikiに正確なスペック@<fn>{seeeduino_lotus_wiki}は記載されていますが、 Cortex-M0+ は V1.1 よりも性能が向上しており、本書で使用するボードはこちらになります。
+
+2種類のseeduino lotusの外観
+//image[seeeduino_lotus_two_types][2種類のseeduino lotus][scale=0.75]
 
 また価格はすべて2025年11月1日時点の価格です。為替の影響を大きく受けるので、あくまで目安としてご覧ください。
 もし、海外のECサイトで購入することに抵抗がある方は、国内のショップであるスイッチサイエンス、マルツオンライン、秋月電子、またはAmazonで一部製品は購入することが可能です。
@@ -173,13 +179,17 @@ Seeeduino LotusはSeeeduino Lotus V1.1とSeeeduino Lotus Cortex-M0+ の2種類�
 
  * デジタルコネクタ × 7個 (D2〜D8)
  * アナログコネクタ × 3個 (A0〜A2)
- * I2Cコネクタ × 2個
-
-TODO 図
+ * I2C（アイ・スクエアド・シー）コネクタ × 2個
 
 そのため、次の図を参考に配線を行ってください。
 
-//TODO 図
+//image[sensor_connection][センサー接続図][scale=0.75]
+
+温度センサー     D3
+騒音センサー     A2
+水位センサー     I2C
+照度センサー     I2C
+（LCDディスプレイ  I2C）
 
 == センサーデータ取得のプログラムのダウンロードと実行方法
 
@@ -202,7 +212,7 @@ Arduino公式サイト(@<href>{https://www.arduino.cc/en/software, https://www.a
 Windows、macOSいずれでも構いません。OSに応じたインストーラをダウンロードして、特別な理由がなければデフォルトの設定でインストールします。
 起動して、初期画面（空のスケッチ画面）が表示されれば成功です。
 
-//TODO 図
+//image[arduino_ide_initial_screen][Arduino IDEの初期画面][scale=0.75]
 
 === Seeeduino用ボードパッケージを追加する
 
@@ -211,20 +221,23 @@ Seeeduino Lotus Cortex M0+ は Arduino 互換機ですが、Arduino Uno とは�
 
  * メニューから [ファイル] → [環境設定] を開く
  * 「追加のボードマネージャのURL」欄に次を入力
-    ** https://files.seeedstudio.com/arduino/package_seeeduino_boards_index.json
+    #@# ** https://files.seeedstudio.com/arduino/package_seeeduino_boards_index.json
+    @<href>{https://raw.githubusercontent.com/Seeed-Studio/Seeed_Platform/master/package_legacy_seeeduino_boards_index.json}
  * ［OK］を押して閉じる
 
-［OK］を押して閉じる
+//image[additional_board_manager_url][追加のボードマネージャのURL][scale=0.75]
 
   * [ツール] → [ボード] → [ボードマネージャ…] を開く
   * 検索欄に「seeeduino」と入力
-  * ？「Seeed AVR Boards（Seeeduino）」を選び「インストール」
+  * 「Seeed AVR Boards（Seeeduino）」を選び「インストール」
 
-[ツール] → [ボード] → [ボードマネージャ…] を開く
+//image[board_manager][ボードマネージャ][scale=0.75]
 
-検索欄に「seeeduino」と入力
+#@# [ツール] → [ボード] → [ボードマネージャ…] を開く
 
-？「Seeed SAMD Boards」を探して「インストール」をクリック
+#@# 検索欄に「seeeduino」と入力
+
+#@# ？「Seeed SAMD Boards」を探して「インストール」をクリック
 
 これで Seeeduino Cortex M0+ 系のボードが Arduino IDE に追加されます。
 
