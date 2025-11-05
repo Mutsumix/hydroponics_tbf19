@@ -167,9 +167,6 @@ GitHubからプログラムのソースコードを取得します。
 
 アクセスした先の画面で、「Code」ボタンを選択し「Download ZIP」を選択して、zipファイルをダウンロードして、解凍します。
 
-
-// todo zipパッケージの作成
-
 //image[github_download_zip][GitHubからzipファイルをダウンロードする][scale=0.75]
 //image[unzip_lambda][zipファイルを解凍する][scale=0.75]
 
