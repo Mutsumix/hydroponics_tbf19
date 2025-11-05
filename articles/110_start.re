@@ -4,6 +4,10 @@
 
 プログラミングは必要ありません。そもそもパソコンすら不要です。
 
+概要を図で示すと次のようになります。
+
+//image[switchbot_monitoring_system.drawio][手軽な監視の概要図][scale=0.75]
+
 早速、購入品一式と設置方法を見ていきましょう。
 
 == 購入品一式
@@ -17,6 +21,10 @@ SwitchBot ハブミニ@<fn>{switchbot_hub_mini}	1つ	公式ネットショップ
 水温計@<fn>{water_temperature_sensor}	2つ	Amazon	¥585
 //}
 
+//image[switchbot_co2_sensor][CO2センサー][scale=0.5]
+//image[switchbot_camera][屋内カメラ][scale=0.5]
+//image[switchbot_hub_mini][ハブミニ][scale=0.5]
+
 //footnote[switchbot_co2_sensor][@<href>{https://www.switchbot.jp/products/switchbot-co2-meter} SwitchBot CO2センサー（温湿度計）]
 //footnote[switchbot_indoor_camera][@<href>{https://www.switchbot.jp/products/switchbot-indoor-cam} SwitchBot 屋内カメラ]
 //footnote[switchbot_hub_mini][@<href>{https://www.switchbot.jp/products/switchbot-hub-mini} SwitchBot ハブミニ]
@@ -24,8 +32,6 @@ SwitchBot ハブミニ@<fn>{switchbot_hub_mini}	1つ	公式ネットショップ
 
 
 === SwitchBot製品の選定理由について
-
-#@# SwitchBot製品を多く選んでいる理由ですが、安さと調達の容易さと、API経由で制御ができる拡張性の高さです。
 
 ==== 安さ
 まず屋内カメラについては、同機能を持つ屋内用ネットワークカメラの中では比較的安い部類に入ります。
@@ -46,7 +52,7 @@ SwitchBot ハブミニ@<fn>{switchbot_hub_mini}	1つ	公式ネットショップ
 
 === ハブについて
 
-ハブに関しては、温湿度計やスマートリモコン、あるいは照明と一体になった製品も販売されています。
+ハブに関しては、ハブミニ以外にも、ハブ2、ハブ3、さらに温湿度計やスマートリモコン、あるいは照明と一体になった製品も販売されています。
 
 どの製品でも大丈夫なので、ご自宅に必要だと思ったハブ機能を持つ製品を選んでください。ハブに接続することで、遠隔で計測データの確認ができ、後の章で触れるAPI経由での制御も可能になります。
 
