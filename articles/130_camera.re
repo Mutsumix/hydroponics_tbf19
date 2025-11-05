@@ -199,8 +199,8 @@ sudo apt update && sudo apt upgrade -y
 //}
 
 sudoは管理者権限で実行するコマンド、aptはソフトウェアをインストール・更新するためのツールです。
-初回は実行に10-20分かかる場合があります。
 ラズベリーパイを触っていると、そんなつもりじゃないのにlinuxのコマンドをどんどん覚えていきます。
+初回は実行に10-20分かかる場合があります。
 
 === プログラムの用意と撮影までの流れ
 
@@ -317,7 +317,7 @@ camera:
     fps: 30
     focus: 500  # EMEETのみ有効。範囲0-1023: 0=最近距離、400-600=室内3-5m、1023=無限遠
   scheduler:
-    day_of_week: ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+    day_of_week: ["monday", "tuesday", "wednesday", "thursday", "friday"]
     at_time: ["06:00:00", "12:00:00", "18:00:00"]
 //}
 
@@ -487,7 +487,7 @@ OAuthの設定をしていきます。@<fn>{oauth}
  * アプリケーションの種類: 「デスクトップアプリ」を選択
  * 名前: 任意（例: Raspi Camera Client）
 //image[gcp_project_create_17][GCPプロジェクトの作成画面17][scale=0.75]
- * 「作成」
+ * 「作成」を選択
 
 ==== 認証情報のダウンロード
 
@@ -501,6 +501,7 @@ OAuthの設定をしていきます。@<fn>{oauth}
 === ファイルの配置
 
 ダウンロードしたファイルをラズパイ上に配置しましょう
+
 VNC Viewerを使った方法で解説します。
 
  1. VNC ViewerでRaspberry Piに接続
@@ -542,17 +543,17 @@ python setup_auth.py --test-camera --test-upload
 //image[setup_auth_py][setup_auth.pyの実行結果][scale=0.75]
 
 //cmd{
-Please visit this URL to authorize this application: <https://accounts.google.com/o/oauth2/auth?.>..
+Please visit this URL to authorize this application: https://accounts.google...
 //}
 
- * このURLをコピー（VNC Viewerならマウスでドラッグして右クリック→URLをコピー→ブラウザに貼り付け、もしくはOpen UR+）
+ * このURLをコピー（VNC Viewerならマウスでドラッグして右クリック→URLをコピー→ブラウザに貼り付け、もしくはOpen URL）
  * ブラウザで開く（Raspberry Pi上またはVNC接続元のPC）
  * Googleアカウントでログイン
- //image[login_google_account][Googleアカウントでログイン][scale=0.75]
+//image[login_google_account][Googleアカウントでログイン][scale=0.75]
  * 「このアプリはGoogleで確認されていません」という警告が表示されます@<fn>{oauth_warning}
- //image[oauth_warning][OAuth警告画面][scale=0.75]
+//image[oauth_warning][OAuth警告画面][scale=0.75]
 
-//footnote[oauth_warning][なぜこの警告が出るのかというと、Googleの審査を受けていない個人開発アプリだからです。審査は数週間かかり、商用アプリでなければ不要です]
+//footnote[oauth_warning][なぜこの警告が出るのかというと、Googleの審査を受けていない個人開発アプリだからです。審査は申請に時間がかかります。商用アプリでなければ審査をせずにテストモードとして使用し続けることも可能です。]
 
  * 一瞬ギョッとしてしまいますが、落ち着いて「続行」をクリック
  * 権限の許可画面で「すべて選択」→「続行」を選択
@@ -560,11 +561,11 @@ Please visit this URL to authorize this application: <https://accounts.google.co
 //image[select_all_permissions][すべて選択して続行][scale=0.75]
 
  * 「The authentication flow has completed. You may close this window.」というあり得ないくらい素っ気ない画面が表示されれば成功です。
- //image[authentication_flow_completed][認証成功画面][scale=0.75]
+//image[authentication_flow_completed][認証成功画面][scale=0.75]
 
  * ターミナル上でプログラムが続行されていることを確認してください。
 
- //image[terminal_running][プログラムが続行され完了した画面][scale=0.75]
+//image[terminal_running][プログラムが続行され完了した画面][scale=0.75]
 
 #@#  * 認証コードが表示されるのでコピー
 #@#  * ターミナルに戻って貼り付け→`Enter`
@@ -615,9 +616,8 @@ INFO: テスト画像を削除しました
 
 //emlist[config.yml]{
 scheduler:
-  day_of_week: ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]  # 月〜金のみ撮影
+  day_of_week: ["monday", "tuesday", "wednesday", "thursday", "friday"]  # 月〜金のみ
   at_time: ["06:00:00", "12:00:00", "18:00:00"]        # 毎日6時、12時、18時に撮影
-
 //}
 
  * at_timeの指定方法：24時間表記で指定します。朝6時を指定する場合は、"6:00:00"ではなく"06:00:00"と指定しないとエラーになりますのでご注意ください。
@@ -668,7 +668,7 @@ v4l2-ctl -d /dev/video0 --list-formats-ext | grep MJPG
  * Logicool C270: 最大1280x720（または1280x960）
  * EMEET S600: 最大3840x2160
 
-//emlistnum[config.yml]{
+//emlist[config.yml]{
 camera:
   settings:
     width: 1280
@@ -709,11 +709,13 @@ python google_photos.py
 数秒ほど待つと、選択した画像をもとにアニメーション動画が自動生成されます。@<fn>{google_photos_album_create_animation_menu_animation}
 この動画はGoogleフォト上で再生・共有できるほか、必要に応じてダウンロードして編集ソフトで再加工することも可能です。
 
-//footnote[google_photos_album_create_animation_menu_animation][書籍では動画をお見せできないのが残念です]
 
-連日撮影した植物の成長をこうして動画にまとめると、時間の流れが一目でわかります。
+連日撮影した植物の成長をこうして動画にまとめると、成長の経緯が一目でわかります。@<fn>{google_photos_album_create_animation_menu_animation}
 純粋に見ていて楽しいですし、「葉が大きく成長するタイミング」や「日照時間や温度・湿度による葉の動きの違い」など連続的な成長の様子から多くの気づきが得られるのではないでしょうか。
+
 ラズベリーパイとGoogleフォトの連携により、手間をかけずにタイムラプス動画を作成することができました。
+
+//footnote[google_photos_album_create_animation_menu_animation][書籍では動画をお見せできないのが残念です]
 
 == 参考資料・ソース
 
