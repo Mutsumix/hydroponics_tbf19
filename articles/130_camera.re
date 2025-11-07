@@ -547,6 +547,9 @@ Please visit this URL to authorize this application: https://accounts.google...
 //}
 
  * このURLをコピー（VNC Viewerならマウスでドラッグして右クリック→URLをコピー→ブラウザに貼り付け、もしくはOpen URL）
+
+//image[open_url][API認証用のURLが表示される][scale=0.75]
+
  * ブラウザで開く（Raspberry Pi上またはVNC接続元のPC）
  * Googleアカウントでログイン
 //image[login_google_account][Googleアカウントでログイン][scale=0.75]
