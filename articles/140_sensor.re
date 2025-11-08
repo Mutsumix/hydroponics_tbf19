@@ -181,7 +181,7 @@ Seeeduino LotusはSeeeduino Lotus V1.1とSeeeduino Lotus Cortex-M0+ の2種類�
  * アナログコネクタ × 3個 (A0〜A2)
  * I2C（アイ・スクエアド・シー）コネクタ × 2個
 
-そのため、次の図を参考に配線を行ってください。
+そのため、今回は次の図を参考に配線を行ってください。
 
 //image[sensor_connection][センサー接続図][scale=0.75]
 
@@ -219,27 +219,26 @@ Windows、macOSいずれでも構いません。OSに応じたインストーラ
 Seeeduino Lotus Cortex M0+ は Arduino 互換機ですが、Arduino Uno とは製造元・チップ構成が異なります。
 そのため、Arduino IDE に Seeed 製ボードパッケージを追加する必要があります。
 
- * メニューから [ファイル] → [環境設定] を開く
+ * Windows: メニューから [ファイル] → [環境設定] を開く
+ * macOS: メニューから [Arduino IDE] → [Preferences] を開く
  * 「追加のボードマネージャのURL」欄に次を入力
-    #@# ** https://files.seeedstudio.com/arduino/package_seeeduino_boards_index.json
-    @<href>{https://raw.githubusercontent.com/Seeed-Studio/Seeed_Platform/master/package_legacy_seeeduino_boards_index.json}
+
+    https://files.seeedstudio.com/arduino/package_seeeduino_boards_index.json@<fn>{seeeduino_board_manager_url}
  * ［OK］を押して閉じる
+
+//footnote[seeeduino_board_manager_url][本書のサポートページ（@<href>{https://mutsumikajihara.com/data-garden/}）にも記載していますので、そちらからコピペすることも可能です]
 
 //image[additional_board_manager_url][追加のボードマネージャのURL][scale=0.75]
 
+準備が整ったので、Seeeduino Lotus Cortex M0+ 用のボードパッケージをインストールします。
+
   * [ツール] → [ボード] → [ボードマネージャ…] を開く
-  * 検索欄に「seeeduino」と入力
-  * 「Seeed AVR Boards（Seeeduino）」を選び「インストール」
+  * 検索欄に「seeed samd」と入力
+  * 「Seeed SAMD Boards」が候補に出てきたら「Install」をクリック
 
 //image[board_manager][ボードマネージャ][scale=0.75]
 
-#@# [ツール] → [ボード] → [ボードマネージャ…] を開く
-
-#@# 検索欄に「seeeduino」と入力
-
-#@# ？「Seeed SAMD Boards」を探して「インストール」をクリック
-
-これで Seeeduino Cortex M0+ 系のボードが Arduino IDE に追加されます。
+これで Seeeduino Cortex M0+ 系のボードパッケージが Arduino IDE に追加されました。
 
 === Seeeduino Lotus Cortex M0+ をPCに接続する
 
@@ -249,33 +248,63 @@ Seeeduino Lotus Cortex M0+ を Micro USB ケーブルで PC に接続します�
 
 接続が完了すると、Arduino IDE のポートリストに新しいポートが表示されます。
 Windows では「COMx」（x は数字）、macOSやLinuxでは「/dev/cu.usbmodemXXXX」といった形式になります。
-ポートが分からない場合は、一度 USB を抜き差しして、新たに現れたポートを選びます。
 
-todo 画像
+//image[port_list][ポートリスト][scale=0.75]
+
+ポートが分からなくなった場合は、一度 USB を抜き差しして、新たに現れたポートを選びます。
 
 === ボードとポートを設定する
 
-ボードとポート、紛らわしいですが別物ですね。この場合の@<b>{ボード}とは、Seeeduino基盤のことで、@<b>{ポート}とは、PCとボードを接続するための通信線のことです。
+接続したSeeeduinoとボードの種類を設定します。
+「ボ」ードと「ポ」ート、紛らわしいですが別物です。
 
-//TODO LoRa WAN ？結局？ * [ツール] → [ボード] → [Seeed SAMD Boards] → [Seeeduino Lotus Cortex M0+] を選択
- * [ツール] → [ポート] で接続されたポートを選択
+ここでいう@<b>{ボード}とは、Seeeduino基盤のことです。
 
-また、ボーレートは 115200bps に設定しておきましょう。
+@<b>{ポート}とは、PCとボードを接続するための通信線のことです。
 
-TODO キャプチャ
+ * @<code>{Select other board and port}を選択
+ //image[select_other_board_and_port][Select other board and port][scale=0.75]
+
+ * 右側のPORTSからSeeeduino が接続されたポートを選択して「OK」をクリック
+
+ //image[select_port][Select port][scale=0.75]
+
+ * 左側のBOARDSからSeeeduino Zero を選択して「OK」をクリック
+
+ * また、ボーレート@<fn>{baud_rate}は 115200bps に設定しておきます
+
+画面下部に、「Serial Monitor（シリアルモニタ）」が表示されていますか？表示されていない場合は、「Tools」メニューから「Serial Monitor」を選択してください。
+
+//image[boud_rate_setting][ボーレートの設定][scale=0.75]
+
+//footnote[baud_rate][ボーレートは、通信速度のことで、1秒間に何回信号状態が変化するかを表します。115200bpsは、1秒間に115200ビットのデータを送信する速度です。ここの値が異なっていると、文字化けが発生します。]
+
+これでボードとポートの設定が完了しました。
 
 === 接続確認（Lチカ）
 
-動作確認のため、[ファイル] → [スケッチ例] → [01.Basics] → [Blink] を開いて書き込みます。
+動作確認のため、用意されているLチカ（LEDの点滅）のサンプルプログラムを書き込んでみます。
 
-* 左上のチェックマークアイコンが検証ボタンなのでクリックします。
-* プログラムに間違いがなければ、コンパイルが完了します。
-* 同じく左上の右矢印アイコンが、書き込みボタンですのでクリックします。
-* 問題なくプログラムが書き込めれば、「ボードへの書き込みが完了しました。」と表示されます。
+ * Lチカのサンプルプログラムを選択
+ ** Windows: [ファイル] → [スケッチ例] → [01.Basics] → [Blink] 
+ ** macOS: [File] → [Examples] → [01.Basics] → [Blink] 
+
+//image[select_blink_program][Select Blink program][scale=0.75]
+
+ここで、Arduino IDEでのプログラムの実行の方法について確認しておきましょう。
+
+左上のチェックマークアイコンは「コンパイル」ボタンです。プログラムに間違いがないかどうかを検証します。
+
+同じく左上にある右矢印アイコンが、「アップロード」ボタンです。
+コンパイル作業を行ったのちに、プログラムをボードに書き込みます。
+
+//image[upload_program][Arduino IDEにおけるプログラムの実行方法　　][scale=0.75]
+
+それでは実際にアップロードボタンを選択して、プログラムを書き込んでみましょう。
 
 基板上の LED が 1 秒間隔で点滅すれば成功です。
 
-TODO 図
+//image[blink_program_result][Lチカの結果][scale=0.75]
 地味ですがまたたいています
 
 === センサーを接続する
@@ -290,64 +319,85 @@ TODO 図
 水位センサー     I2C
 照度センサー     I2C
 騒音センサー     A1
-LCDディスプレイ  I2C
+LCDディスプレイ（オプション）  I2C
 //}
 
 
-// TODO 画像
+//image[sensor_connection_diagram][センサー接続図][scale=0.75]
 
-=== コード
+=== コードの紹介とライブラリのダウンロード
 
-GitHubからセンサーデータを取得するプログラムのソースコードを取得します。
+ここからは、センサーデータを取得するプログラムのソースコードを作成します。
+
+Arduino IDEで新規プロジェクトを作成します。
+左側のフォルダアイコン→「NEW SKETCH」の順で選択します。
+
+//image[new_sketch][新規プロジェクト作成][scale=0.75]
+
+続いてGitHubからセンサーデータを取得するプログラムのソースコードを取得します。
 
 著者のリポジトリにアクセスしてください。
 
 @<href>{https://github.com/Mutsumix/Seeeduino.git} 
 
-必要なソースコードは@<code>{seeduino-sensor-monitor/seeduino-sensor-monitor.ino}のみなので、コピーしてArduino IDEに貼り付けます。
+必要なソースコードは@<code>{seeduino-sensor-monitor/seeduino-sensor-monitor.ino}のみです。
 
-各センサーが接続されていない場合でも、エラーを出さずに動作します。
+コピーしてArduino IDEに貼り付けます。
 
-//TODO 多分ライブラリのダウンロードが必要
+このプログラムですが、各センサーが接続されていない場合でも、エラーを出さずに動作します。
+ただし、必要なライブラリがダウンロードされていない場合は、エラーになります。
 
-//listnum[sensor_monitor][sensor_monitor.ino]{
-TODO ここはGitHubのリポジトリをエディタに貼り付けた画像に置き換える
+そのため、次にセンサー関連のライブラリをダウンロードします。
+このプログラムは4つのライブラリを必要とします。
+@<table>{sensor_library} の表を参考に、検索キーワードをライブラリの検索窓に入力してダウンロードしていってください。
+
+//image[download_sensor_library][センサーライブラリ ダウンロード][scale=0.75]
+
+//table[sensor_library][センサーライブラリ]{
+使用するセンサー	ライブラリ名	検索キーワード（Arduino IDEのライブラリマネージャで入力）
+--------------------------
+温度センサー（DS18B20）	OneWire	OneWire
+温度センサー（DS18B20）	DallasTemperature	DallasTemperature
+照度センサー（TSL2561）	Adafruit TSL2561 Library	Adafruit TSL2561
+LCDディスプレイ（Grove LCD RGB Backlight）	Grove_LCD_RGB_Backlight	Grove LCD RGB
 //}
+
+これらのライブラリをダウンロードすると、コンパイルに成功するはずです。
+
+照度センサーのライブラリ「Adafruit TSL2561」をインストールしようとすると、依存関係で他のライブラリもダウンロードするかを聞かれますので、
+「Install all」を選択してください。
+
+//image[install_dependent_library][依存関係のライブラリのインストール][scale=0.75]
+
 
 === 動作確認
 
-書き込み後、Arduino IDEのシリアルモニタ（115200 bps）を開きます。
+それでは書き込んでみましょう。
+書き込み後、Arduino IDEのシリアルモニタにこのようなログが表示されれば成功です。@<fn>{serial_monitor}
 
-=== Sensor Monitor
-Temp: 24.6C | Water: 80% | Sound: 45.8 dB | Light: 324 lux
+//footnote[serial_monitor][Serial Monitorは、Arduino IDEのメニューから「Tools」→「Serial Monitor」で開くことができます。]
 
-Temp: 24.7C | Water: 79% | Sound: 47.2 dB | Light: 125 lux
+//list[sensor_monitor][シリアルモニタの出力例]{
+Temp: 30.0C | Water: 0% | Sound: 16% | Light: 44 lux
+//}
 
 数値が周期的に更新されれば、すべてのセンサーが動作しています。
-画面が文字化けする場合は、ボーレートの設定が115200bpsになっていない可能性があります。
+もし接続していないセンサーがあれば、「NA」と表示されるはずです。
+
+画面が文字化けする場合は、ボーレートの設定が115200bps になっていない可能性があるので、確認しましょう。
+
+//image[serial_monitor_result][シリアルモニタの出力結果][scale=0.75]
 
 == 液晶モニタに表示も可能
 
-オプションのLCD液晶ディスプレイを接続した場合は、Seeduinoに接続すれば、結果を液晶モニタに表示することもできます。
-ただし、接続場所はI2Cポートです。
-照度と水位でI2Cポートをすでに二つ使用しているため、どちらかを割り当てる必要があります。
-筆者は水耕栽培をしているため、水位をチェックするのに水位センサーを使います。そういった必要性を感じない方は、騒音センサーを外して、空いたコネクタにLCD液晶ディスプレイを接続すると良いでしょう。
+オプションのLCD液晶ディスプレイを接続した場合は、書き込み前にSeeduinoに接続していれば、結果を液晶モニタに表示することもできます。
+ただし、接続場所はI2Cポートです。照度と水位でI2Cポートをすでに二つ使用しているため、どちらかを割り当てる必要があります。
 
+このようにLCDにセンサー値が順次更新表示されれば成功です。
 
-するとこのようにLCDにセンサー値が順次更新表示されます。
-
-TODO 画像
+//image[lcd_display_result][液晶モニタの出力結果][scale=0.75]
 
 一度ボードにプログラムが書き込まれると、あとはPCに接続せずに、電力を供給し続けるだけでセンサー値を確認することができます。
 モバイルバッテリーでの駆動も可能なので、一時的に屋外の植物の環境を確認したい場合にも活用ができます。
 
 TODO 屋外で実行している画像
-
-
-#@# === Arduino IDEの代わりにPlatformIOを使う
-
-#@# Arduino IDEを使わずに、Visual Studio Codeを使ってプログラムを書く方法を紹介します。
-#@# Visual Studio Code 拡張のPlatformIOというものがあります。
-#@# 今回のようなシンプルなプログラムであれば、Arduino IDEでも十分ですが、自分の好きなエディタを使いたい場合は、PlatformIOをVisual Studio Codeにインストールしてください。@<fn>{platformio}
-
-#@# //footnote[platformio][@<href>{Visual Studio Code 拡張の方が、AIツールによる支援が受けやすいというメリットがあります。もし自分でプログラムを修正したい、という場合は、PlatformIOを使うと良いでしょう。}]
