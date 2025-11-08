@@ -16,20 +16,14 @@ Seeduinoから取得したセンサーデータをRaspberry Piで受信するた
 
 Raspberry PiのUSBポートとSeeeduino LotusのMicro USBポートを接続するケーブルを用意します。
 
-TODO 画像 こんなの
+@<chapref>{140_sensor}でPCとSeeduino Lotusを接続する際に使用したケーブルをそのまま使うのが良いでしょう。
+Seeduino Lotus への電力供給とデータの受け取りがこれ一本でできます。
 
 Raspberry Pi側で、次のコマンドでデバイス名を確認します。
 
 //cmd{
 $ ls /dev/ttyACM*
 //}
-
-「コマンドが見つかりません」というエラーが出た場合は、次のコマンドでscreenをインストールします。
-
-//cmd{
-sudo apt update
-sudo apt install screen
-}
 
 lsコマンドの結果、このように一覧が出力されます。
 一般的には @<code>{/dev/ttyACM0} が対象のデバイスです。
@@ -40,9 +34,16 @@ lsコマンドの結果、このように一覧が出力されます。
 $ screen /dev/ttyACM0 115200
 //}
 
+「コマンドが見つかりません」というエラーが出た場合は、次のコマンドでscreenをインストールします。
+
+//cmd{
+sudo apt update
+sudo apt install screen
+}
+
 シリアル受信ができていれば、結果がこのように表示されます。
 
-TODO 画像
+//image[screen_result][screenの出力結果][scale=0.75]
 
 単に接続しているだけですが、データが送られていることが確認できます。
 
@@ -53,14 +54,14 @@ screenコマンドを終了するには、@<code>{Ctrl+a} → @<code>{k} → @<c
  * K = Kill（終了）
  * y = Yes（確認）
 
-このデータをThingSpeakに送信しましょう。
+次に、このデータをThingSpeakに送信するPythonスクリプトを用意します。
 
 == ThingSpeakに送信する
 
 @<chapref>{120_dashboard} でThingSpeakのアカウントを作成し、チャンネルを作成しました。
 そこに新たにSeeeduinoから送信したデータ用のチャンネルを作成します。
 
-// TODO 画像
+//image[thingspeak_channel][Seeeduino用のThingSpeakチャンネルの作成][scale=0.75]
 
 ThingSpeak側の準備ができたら、データ送信のPythonスクリプトを準備します。
 
@@ -86,7 +87,7 @@ cp example.config.yml config.yml
 config.ymlを開いて、ThingSpeakのAPIキーと、@<code>{ $ ls /dev/ttyACM* } で確認したデバイス名を設定します。
 
 //emlist[config.yml]{
-thingspeak_api_key: "YOUR_THINGSPEAK_API_KEY"   # ThingSpeakのWrite APIキーを設定
+thingspeak_api_key: "YOUR_THINGSPEAK_WRITE_API_KEY"   # ThingSpeakのWrite APIキーを設定
 serial_port: "/dev/ttyACM0"  # シリアルポートのデバイス名を設定(ttyACM0でなければ変更)
 baud_rate: 115200
 send_interval_minutes: 0.25  # データ送信間隔を設定（0.25分 = 15秒）
@@ -107,14 +108,15 @@ python uploader.py
 これでThingSpeakに設定した間隔でデータがアップロードされます。
 デフォルトは0.25分（15秒）なので、好みの時間に設定すると良いでしょう。
 
-TODO キャプチャ
+//image[python_result][Pythonスクリプトの実行結果][scale=0.75]
+//image[thingspeak_result][ThingSpeakに送信されたデータ][scale=0.75]
 
 == Grafanaでダッシュボードを作る
 
 ThingSpeakでデータが受信できているのを確認できたら、最後に、Grafanaのダッシュボードにデータを追加します。
 
 @<chap>{120_dashboard} でGrafanaの設定をしていれば、データソースとしてThingSpeakがすでに設定されています。
-同じ容量で、Seeeduinoから送信したデータを取得するデータソースを追加します。
+同じ要領で、Seeeduinoから送信したデータを取得するデータソースを追加します。
 
 最後に、温度・湿度・CO2を設定したときと同様に、各センサーのデータをグラフに設定していきます。
 
@@ -122,34 +124,21 @@ ThingSpeakでデータが受信できているのを確認できたら、最後�
 
 //image[seeeduino-dashboad][Grafanaダッシュボードのサンプル][scale=0.75]
 
+ここはセンスが問われるところですので、自分好みのダッシュボードを作成してください。
+
 == まとめとさらなる活用について
 
 この章では、SeeduinoからRaspberry Piにセンサーデータを送信し、最終的にGrafanaダッシュボードに反映させる手順を紹介しました。
 
 ダッシュボードは作って終わりではなく、ここを起点にさまざまなアラートや自動化を行うことができます。
-Grafanaでは閾値を設定した通知機能がありますので、気温が一定の温度を超えたらメールやSlackの通知を行うことができます。
+Grafanaでは閾値を設定した通知機能があります。
+気温が一定の温度を超えたらメールやSlackへの通知を行う、といったことができます。
 
 さらに、SwitchBot APIを使えば指ロボットや、電球などの家電製品を自動で操作することができます。
 また、上級者向けですが、赤外線コマンドをAPIで操作することで、赤外線リモコンの機能を再現することもできます。
-それを活かして、例えば以下のようなことができます。
- * 照度が下がったら、部屋の電気をつける
- * 温度が30°Cを超えたらエアコンをつける
+それを活かして、例えば次のようなことができます。
+ * 照度が下がったら、LEDの電球をつける
+ * 温度が30°Cを超えたら、ファンをつける
 
 アイディア次第でさまざまな自動化が可能です。
 また、Seeeduinoで今回紹介していないようなセンサー、土壌水分量やEC値、PC値を測定できるものを試すのも面白いと思います。
-
-#@# ゴミ置き場
-#@# == なぜ Cortex M0+ を選ぶのか
-
-#@# Seeed Studio の販売サイトを見ると、Seeeduino Lotusには、古い ATmega328P 版と Cortex M0+ 版の2種類が存在します。
-#@# ATmega 版は5V系センサーとの互換性が高い反面、現在は製造終了となっており、入手が難しくなっています。
-
-#@# 一方で Cortex M0+ 版は 3.3V 動作ですが、
-#@# Seeed Studio が現在も出荷している現行モデルであり、Arduino IDE との互換性も高く、今後のセンサーラインナップにも対応しています。
-#@# 本書では、再現性と調達性を優先し、Cortex M0+ 版を標準環境として採用します。
-
-#@# == 旧版（ATmega328P版）を使用する場合
-
-#@# もし手元に ATmega328P 版 Seeeduino Lotus がある場合は、
-#@# Arduino IDE の [ツール] → [ボード] → [Seeed AVR Boards] → [Seeeduino Lotus] を選択してください。
-#@# 接続・スケッチ手順はほぼ同じですが、一部のライブラリで互換性が異なる場合がある点だけ注意すれば問題なく動作します。
