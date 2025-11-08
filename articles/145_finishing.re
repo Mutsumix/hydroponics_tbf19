@@ -11,7 +11,6 @@
  1. 結果をThingSpeakで確認する
  1. Grafanaのダッシュボードを更新する
 
-
 == Raspberry Piでシリアルデータを受信する
 Seeduinoから取得したセンサーデータをRaspberry Piで受信するために、双方を接続する必要があります。
 
@@ -25,9 +24,17 @@ Raspberry Pi側で、次のコマンドでデバイス名を確認します。
 $ ls /dev/ttyACM*
 //}
 
-一般的には @<code>{/dev/ttyACM0} です。
+「コマンドが見つかりません」というエラーが出た場合は、次のコマンドでscreenをインストールします。
 
-シリアル受信できるかを確認します。
+//cmd{
+sudo apt update
+sudo apt install screen
+}
+
+lsコマンドの結果、このように一覧が出力されます。
+一般的には @<code>{/dev/ttyACM0} が対象のデバイスです。
+
+次に、シリアル受信できるかを確認します。
 
 //cmd{
 $ screen /dev/ttyACM0 115200
@@ -37,12 +44,21 @@ $ screen /dev/ttyACM0 115200
 
 TODO 画像
 
+単に接続しているだけですが、データが送られていることが確認できます。
+
+screenコマンドを終了するには、@<code>{Ctrl+a} → @<code>{k} → @<code>{y} の順にキーを押します。
+
+覚え方
+ * Ctrl + A = screenのコマンドモード
+ * K = Kill（終了）
+ * y = Yes（確認）
+
 このデータをThingSpeakに送信しましょう。
 
 == ThingSpeakに送信する
 
 @<chapref>{120_dashboard} でThingSpeakのアカウントを作成し、チャンネルを作成しました。
-そこに新たにフィールドを追加します。
+そこに新たにSeeeduinoから送信したデータ用のチャンネルを作成します。
 
 // TODO 画像
 
@@ -59,19 +75,21 @@ ThingSpeak側の準備ができたら、データ送信のPythonスクリプト�
 git clone https://github.com/Mutsumix/Seeeduino.git
 //}
 
+thingspeak-uploaderフォルダに移動します。
+
 設定ファイル（example.config.yml）をコピーして、config.ymlという名前で保存します。
 
 //cmd{
-cp thingspeak-uploader/example.config.yml thingspeak-uploader/config.yml
+cp example.config.yml config.yml
 //}
 
 config.ymlを開いて、ThingSpeakのAPIキーと、@<code>{ $ ls /dev/ttyACM* } で確認したデバイス名を設定します。
 
 //emlist[config.yml]{
-thingspeak_api_key: "YOUR_THINGSPEAK_API_KEY"
-serial_port: "/dev/ttyUSB0"
+thingspeak_api_key: "YOUR_THINGSPEAK_API_KEY"   # ThingSpeakのWrite APIキーを設定
+serial_port: "/dev/ttyACM0"  # シリアルポートのデバイス名を設定(ttyACM0でなければ変更)
 baud_rate: 115200
-send_interval_minutes: 0.25
+send_interval_minutes: 0.25  # データ送信間隔を設定（0.25分 = 15秒）
 //}
 
 次に実行に必要なPythonのパッケージをインストールします。
@@ -87,7 +105,7 @@ python uploader.py
 //}
 
 これでThingSpeakに設定した間隔でデータがアップロードされます。
-デフォルトは0.25分（15秒）ので、好みの時間に設定すると良いでしょう。
+デフォルトは0.25分（15秒）なので、好みの時間に設定すると良いでしょう。
 
 TODO キャプチャ
 
@@ -95,9 +113,10 @@ TODO キャプチャ
 
 ThingSpeakでデータが受信できているのを確認できたら、最後に、Grafanaのダッシュボードにデータを追加します。
 
-@<chap>{120_dashboard} でGrafanaの設定をしていれば、データソースとしてThingSpeakがすでに設定されているはずなので、データソースの設定は不要です。
+@<chap>{120_dashboard} でGrafanaの設定をしていれば、データソースとしてThingSpeakがすでに設定されています。
+同じ容量で、Seeeduinoから送信したデータを取得するデータソースを追加します。
 
-温度・湿度・CO2を設定したときと同様に、各センサーのデータをグラフに設定していきます。
+最後に、温度・湿度・CO2を設定したときと同様に、各センサーのデータをグラフに設定していきます。
 
 筆者はこのようにダッシュボードを作成しました。
 
