@@ -138,7 +138,6 @@ Seeeduino Lotus はこのGroveコネクタを12個搭載しており、簡易さ
 
 == 購入品一式
 
-//TODO 要確認
 //table[sensor_list][購入品一式]{
 品目	個数	購入先	目安の価格
 ------------------
@@ -243,7 +242,7 @@ Seeeduino Lotus Cortex M0+ は Arduino 互換機ですが、Arduino Uno とは�
 === Seeeduino Lotus Cortex M0+ をPCに接続する
 
 Seeeduino Lotus Cortex M0+ を Micro USB ケーブルで PC に接続します。
-ケーブルは「データ通信対応」のものを必ず使用してください。
+ケーブルは@<b>{「データ通信対応」}のものを必ず使用してください。
 100円ショップでよく売られている「充電専用」と書かれたケーブルではスケッチの書き込みができません。
 
 接続が完了すると、Arduino IDE のポートリストに新しいポートが表示されます。
