@@ -75,13 +75,13 @@ Arduino系は電源を入れるだけですぐに書き込んだプログラム�
 また、ものによっては半田付けの必要があったりします。初心者がはんだ付けや配線の間違いで詰まってしまった場合、周りに電子工作に詳しい人がいないと、解決ができず学習が止まってしまい、徒労感と挫折感だけが残ってしまうことがあります。
 本書ではそういったことが起きないように、できるだけシンプルな構成でセンサーデータを取得できるような機器、Seeeduino Lotus を選定しました。@<fn>{soldering}
 
-//image[seeeduino_lotus][Seeeduino Lotus][scale=0.75]
+//image[seeeduino_lotus][Seeeduino Lotus][scale=0.5]
 
 Seeeduinoシリーズでは、配線問題を解決するためにGroveコネクタが採用されています。
 Groveは4ピンの専用ケーブルで、センサーを差し込むだけで接続できる仕組みです。
 電源と信号線の配線を自動で正しくまとめてくれるため、間違いを最小限に抑えながら安全に実験できます。
 
-//image[grove_cable][Groveケーブル][scale=0.75]
+//image[grove_cable][Groveケーブル][scale=0.5]
 
 //footnote[soldering][もっと正直に言うと、文系ソフトウェアエンジニアの自分にとって回路図や配線図がマニュアルに出てきた瞬間「自分とは関わりのない世界だ！」と脳が拒絶反応を示して激萎えしてしまいます。そんな自分でもセンサーでデータを取得したい！と言う願望を叶えてくれるのがSeeeduinoとSeeed社のセンサーたちだったんです。]
 
@@ -150,11 +150,10 @@ LCD液晶ディスプレイ（オプション）@<fn>{lcd_display}	1つ	Seeed St
 USBケーブル（USB2.0 Aオス-マイクロBオス）	1本	Amazon	¥500
 //}
 
-Seeeduino LotusはSeeeduino Lotus V1.1とSeeeduino Lotus Cortex-M0+ の2種類が販売されていますが、 Cortex-M0+ が本書で使用するボードです。
-公式のWikiに正確なスペック@<fn>{seeeduino_lotus_wiki}は記載されていますが、 Cortex-M0+ は V1.1 よりも性能が向上しており、本書で使用するボードはこちらになります。
+Seeeduino LotusはSeeeduino Lotus V1.1とSeeeduino Lotus Cortex M0+ の2種類が販売されていますが、 Cortex M0+ が本書で使用するボードです。
+公式のWikiに正確なスペック@<fn>{seeeduino_lotus_wiki}は記載されていますが、 Cortex M0+ は V1.1 よりも性能が向上しており、本書で使用するボードはこちらになります。
 
-2種類のseeduino lotusの外観
-//image[seeeduino_lotus_two_types][2種類のseeduino lotus][scale=0.75]
+//image[seeeduino_lotus_two_types][2種類のSeeduino Lotus][scale=0.75]
 
 また価格はすべて2025年11月1日時点の価格です。為替の影響を大きく受けるので、あくまで目安としてご覧ください。
 もし、海外のECサイトで購入することに抵抗がある方は、国内のショップであるスイッチサイエンス、マルツオンライン、秋月電子、またはAmazonで一部製品は購入することが可能です。
@@ -182,13 +181,13 @@ Seeeduino LotusはSeeeduino Lotus V1.1とSeeeduino Lotus Cortex-M0+ の2種類�
 
 そのため、今回は次の図を参考に配線を行ってください。
 
-//image[sensor_connection][センサー接続図][scale=0.5]
+//image[sensor_connection][センサー接続図][scale=0.25]
 
-温度センサー     D3
-騒音センサー     A2
-水位センサー     I2C
-照度センサー     I2C
-（LCDディスプレイ  I2C）
+ * 温度センサー     D3
+ * 騒音センサー     A2
+ * 水位センサー     I2C
+ * 照度センサー     I2C
+ * (LCDディスプレイ  I2C)
 
 == センサーデータ取得のプログラムのダウンロードと実行方法
 
@@ -227,7 +226,7 @@ Seeeduino Lotus Cortex M0+ は Arduino 互換機ですが、Arduino Uno とは�
 
 //footnote[seeeduino_board_manager_url][本書のサポートページ（@<href>{https://mutsumikajihara.com/data-garden/}）にも記載していますので、そちらからコピペすることも可能です]
 
-//image[additional_board_manager_url][追加のボードマネージャのURL][scale=0.75]
+//image[additional_board_manager_url][追加のボードマネージャの設定][scale=0.75]
 
 準備が整ったので、Seeeduino Lotus Cortex M0+ 用のボードパッケージをインストールします。
 
@@ -262,11 +261,12 @@ Windows では「COMx」（x は数字）、macOSやLinuxでは「/dev/cu.usbmod
 @<b>{ポート}とは、PCとボードを接続するための通信線のことです。
 
  * @<code>{Select other board and port}を選択
- //image[select_other_board_and_port][Select other board and port][scale=0.75]
+
+//image[select_other_board_and_port][Select other board and port メニュー][scale=0.75]
 
  * 右側のPORTSからSeeeduino が接続されたポートを選択して「OK」をクリック
 
- //image[select_port][Select port][scale=0.75]
+//image[select_port][Select port メニュー][scale=0.75]
 
  * 左側のBOARDSからSeeeduino Zero を選択して「OK」をクリック
 
@@ -288,7 +288,7 @@ Windows では「COMx」（x は数字）、macOSやLinuxでは「/dev/cu.usbmod
  ** Windows: [ファイル] → [スケッチ例] → [01.Basics] → [Blink] 
  ** macOS: [File] → [Examples] → [01.Basics] → [Blink] 
 
-//image[select_blink_program][Select Blink program][scale=0.75]
+//image[select_blink_program][Lチカのサンプルプログラムの選択][scale=0.75]
 
 ここで、Arduino IDEでのプログラムの実行の方法について確認しておきましょう。
 
@@ -364,7 +364,7 @@ LCDディスプレイ	Grove_LCD_RGB_Backlight	Grove LCD RGB
 これらのライブラリをダウンロードすると、コンパイルに成功するはずです。
 
 照度センサーのライブラリ「Adafruit TSL2561」をインストールしようとすると、依存関係で他のライブラリもダウンロードするかを聞かれますので、
-「Install all」を選択してください。
+「INSTALL ALL」を選択してください。
 
 //image[install_dependent_library][依存関係のライブラリのインストール][scale=0.75]
 
