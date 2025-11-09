@@ -7,19 +7,18 @@
 以下の順番で作業を行なっていきます。
 
  1. Seeeduino Lotusをラズベリーパイに接続する
+ 1. ThingSpeakのチャンネルを作成する
  1. ラズベリーパイで、Seeeduino Lotusから取得したセンサーデータをThingSpeakに送信するプログラムを実行する
  1. 結果をThingSpeakで確認する
  1. Grafanaのダッシュボードを更新する
 
 == Raspberry Piでシリアルデータを受信する
-Seeduinoから取得したセンサーデータをRaspberry Piで受信するために、双方を接続する必要があります。
-
-Raspberry PiのUSBポートとSeeeduino LotusのMicro USBポートを接続するケーブルを用意します。
+Seeduinoから取得したセンサーデータをRaspberry Piで受信するために、双方を接続する必要があります。そのためRaspberry PiのUSBポートとSeeeduino LotusのMicro USBポートを接続するケーブルを用意します。
 
 @<chapref>{140_sensor}でPCとSeeduino Lotusを接続する際に使用したケーブルをそのまま使うのが良いでしょう。
 Seeduino Lotus への電力供給とデータの受け取りがこれ一本でできます。
 
-Raspberry Pi側で、次のコマンドでデバイス名を確認します。
+接続後、Raspberry Pi側で、次のコマンドでデバイス名を確認します。
 
 //cmd{
 $ ls /dev/ttyACM*
@@ -42,7 +41,7 @@ $ screen /dev/ttyACM0 115200
 //cmd{
 sudo apt update
 sudo apt install screen
-}
+//}
 
 シリアル受信ができていれば、結果がこのように表示されます。
 
@@ -140,6 +139,7 @@ Grafanaでは閾値を設定した通知機能があります。
 さらに、SwitchBot APIを使えば指ロボットや、電球などの家電製品を自動で操作することができます。
 また、上級者向けですが、赤外線コマンドをAPIで操作することで、赤外線リモコンの機能を再現することもできます。
 それを活かして、例えば次のようなことができます。
+
  * 照度が下がったら、LEDの電球をつける
  * 温度が30°Cを超えたら、ファンをつける
 
