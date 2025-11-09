@@ -11,7 +11,7 @@
 しっかりパックV	1つ	セリア	¥100@<fn>{shikkari_pack_v}
 //}
 
-//footnote[daiso_container][@<href>{https://jp.daisonet.com/products/4549131611038} 白は光を通すためもが発生しやすいため、他の色を選ぶと良いでしょう]
+//footnote[daiso_container][@<href>{https://jp.daisonet.com/products/4549131611038} 白は光を通し藻が発生しやすいため、他の色を選ぶと良いでしょう]
 //footnote[shikkari_pack_v][@<href>{https://amzn.asia/d/7dSdVYk} セリアはオンラインショップを持っていないため、Amazonのリンクです]
 
 装置といっても使うものは１００円ショップで購入できるプラスチックの容器とタッパーだけです。
@@ -38,7 +38,7 @@
 
 ハンダゴテはAmazonで購入した1500円程度のもの@<fn>{handa_gotu}を使っています。
 
-//image[handagote][ハンダゴテ][scale=0.75]
+//image[handagote][ハンダゴテ][scale=0.25]
 
 //footnote[handa_gotu][@<href>{https://amzn.asia/d/4NJzAhm} 温度が見れて便利]
 
@@ -56,8 +56,8 @@
 
 機器を収めた状態で側面に穴を開けるための印をつけていきます。
 
-//image[shikkari_pack_v_hole1][しっかりパックVの穴を開けた画像][scale=0.5]
-//image[shikkari_pack_v_hole2][しっかりパックVの最終的な状態の画像][scale=0.5]
+//image[shikkari_pack_v_hole1][穴を開ける場所に印をつける][scale=0.5]
+//image[shikkari_pack_v_hole2][穴を開ける場所に印をつける][scale=0.5]
 
 上部から水がかからないようにタッパーのフタには穴は開けませんが、照度センサーや騒音センサーが効果的に反応するようにセンサーを取り付けます。
 
