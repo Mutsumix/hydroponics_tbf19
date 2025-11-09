@@ -101,7 +101,7 @@ Arduino公式のUno R3よりもSeeeduinoは安価に購入できます。
 
 @<b>{Groveコネクタという福音}
 
-前述しましたが、Arduino系ボードにセンサーを接続する場合、ブレッドボードとジャンパーワイヤーを使った配線作業が必要です。
+前述の通り、Arduino系ボードにセンサーを接続する場合、ブレッドボードとジャンパーワイヤーを使った配線作業が必要です。
 
 @<code>{センサー → ジャンパーワイヤー数本 → ブレッドボード → Arduino}
 
@@ -182,7 +182,7 @@ Seeeduino LotusはSeeeduino Lotus V1.1とSeeeduino Lotus Cortex-M0+ の2種類�
 
 そのため、今回は次の図を参考に配線を行ってください。
 
-//image[sensor_connection][センサー接続図][scale=0.75]
+//image[sensor_connection][センサー接続図][scale=0.5]
 
 温度センサー     D3
 騒音センサー     A2
@@ -341,24 +341,24 @@ Arduino IDEで新規プロジェクトを作成します。
 
 必要なソースコードは@<code>{seeduino-sensor-monitor/seeduino-sensor-monitor.ino}のみです。
 
-コピーしてArduino IDEに貼り付けます。
+これをコピーしてArduino IDEに貼り付けます。
 
 このプログラムですが、各センサーが接続されていない場合でも、エラーを出さずに動作します。
 ただし、必要なライブラリがダウンロードされていない場合は、エラーになります。
 
 そのため、次にセンサー関連のライブラリをダウンロードします。
 このプログラムは4つのライブラリを必要とします。
-@<table>{sensor_library} の表を参考に、検索キーワードをライブラリの検索窓に入力してダウンロードしていってください。
+@<table>{sensor_library} の表を参考に、検索キーワードをライブラリマネージャの検索窓に入力してダウンロードしていってください。
 
 //image[download_sensor_library][センサーライブラリ ダウンロード][scale=0.75]
 
 //table[sensor_library][センサーライブラリ]{
-使用するセンサー	ライブラリ名	検索キーワード（Arduino IDEのライブラリマネージャで入力）
+使用するセンサー	ライブラリ名	検索キーワード
 --------------------------
 温度センサー（DS18B20）	OneWire	OneWire
 温度センサー（DS18B20）	DallasTemperature	DallasTemperature
 照度センサー（TSL2561）	Adafruit TSL2561 Library	Adafruit TSL2561
-LCDディスプレイ（Grove LCD RGB Backlight）	Grove_LCD_RGB_Backlight	Grove LCD RGB
+LCDディスプレイ	Grove_LCD_RGB_Backlight	Grove LCD RGB
 //}
 
 これらのライブラリをダウンロードすると、コンパイルに成功するはずです。
