@@ -6,9 +6,7 @@
 
 自分好みのダッシュボードを作成する理由ですが、自分が知りたいデータを自分の知りたいレイアウトや表示する期間に設定することで、育成している植物の生育状況の把握がしやすくなります。
 
-まずは概要を説明します。
-
-用意する機器は、@<chap>{110_start} で紹介したSwitchBotのCO2センサーとハブミニです。追加で必要な機材はありません。
+まずは概要を説明します。用意する機器は、@<chap>{110_start} で紹介したSwitchBotのCO2センサーとハブミニです。追加で必要な機材はありません。
 
 強いて言えば、これから説明する操作を実行するためのPCが必要です。WindowsでもMacでもLinuxでも、OSは問いません。
 
@@ -22,7 +20,7 @@
 
 == API連携の準備、各種アカウントの作成
 
-プログラムを使ってセンサーの値をモニタリングするためには、APIと連携の準備が必要です。@<fn>{api}
+プログラムを使ってセンサーの値をモニタリングするためには、APIとの連携準備が必要です。@<fn>{api}
 
 次の作業を行なっていきます。
 
@@ -43,9 +41,9 @@ API認証用のトークンを取得します。
 SwitchBotアプリの 設定 > 開発者向けオプション から確認可能です。
 開発者向けオプション は、設定 > 基本データ の アプリバージョン を10回ほどタップすると表示されるようになります。
 
-//image[app_version][アプリバージョンを10回ほどタップ][scale=0.4]
-//image[app_version_detail][開発者向けオプションが表示される][scale=0.4]
-//image[app_version_detail_2][開発者向けオプションからトークン情報が確認可能][scale=0.4]
+//image[app_version][アプリバージョンを10回ほどタップ][scale=0.25]
+//image[app_version_detail][開発者向けオプションが表示される][scale=0.25]
+//image[app_version_detail_2][開発者向けオプションからトークン情報が確認可能][scale=0.25]
 
 ==== SwitchBot クラウドサービス設定（現在は不要な設定です）
 
@@ -121,7 +119,7 @@ SwitchBotのAPIドキュメントの詳細はGitHubから確認できます。@<
 
 //image[thingspeak_channel_save][チャンネル保存ボタン][scale=0.75]
 
-チャンネルが作成されると、各種タブが表示されるので、「API Keys」タブをクリックし、Read API KeysとWrite API Keyが存在するのを確認します。
+チャンネルが作成されると、各種タブが表示されるので、「API Keys」タブをクリックし、Write API Key とRead API Key が存在するのを確認します。
 
 //image[thingspeak_api_keys][API Keysタブ][scale=0.75]
 //image[thingspeak_api_keys_values][Read API KeysとWrite API Keyの値][scale=0.75]
@@ -241,8 +239,6 @@ Lambda関数の設定画面の「テスト」タブを選択し、「テスト�
 
 画面に「成功」と出たらOKです。
 
-次の手順での確認がしやすいように、もう一度テストを実行しておきましょう。
-
 もしそれ以外の結果が出たら、ここまでの手順を見直してください。
 
 //image[aws_lambda_test_result][テストの実行結果（詳細を広げた状態）][scale=0.75]
@@ -251,7 +247,7 @@ Lambda関数の設定画面の「テスト」タブを選択し、「テスト�
 
 ダッシュボードから「SwitchBotSensor」を選択し、「サービスメトリック」のタブを選択します。
 
-SwitchBotから取得したデータが送られていることが確認できます。
+SwitchBotから取得したデータが送られていることを確認します。
 
 // image[mackerel_service_metrics][サービスメトリックの画面][scale=0.75]
 
@@ -369,7 +365,7 @@ Grafana Cloudのウェブサイト（@<href>{https://grafana.com/products/cloud/
 
 「New dashboard」をクリックします。
 
-//image[grafana_cloud_add_dashboard][Panelの追加画面][scale=0.75]
+//image[grafana_cloud_add_dashboard][Dashboardの追加画面][scale=0.75]
 
 「Add visualization」をクリックします。
 
@@ -403,7 +399,7 @@ $. feeds [*].field1 -> Number
 
 Save Dashboardをクリックしてダッシュボードを保存します。
 
-同様の手順で、他のセンサーデータについても取得できるようにしパネルを作成します。
+同様の手順で、他のセンサーデータについても取得できるようにFiels2, Filed3のパネルを作成します。
 
 Grafanaでは表示形式について色々と設定できます。
 
