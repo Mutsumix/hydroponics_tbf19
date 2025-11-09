@@ -18,6 +18,8 @@ Seeduinoから取得したセンサーデータをRaspberry Piで受信するた
 @<chapref>{140_sensor}でPCとSeeduino Lotusを接続する際に使用したケーブルをそのまま使うのが良いでしょう。
 Seeduino Lotus への電力供給とデータの受け取りがこれ一本でできます。
 
+//image[seeeduino_lotus_usb_cable][Seeduino LotusとRaspberry Piを接続した様子][scale=0.5]
+
 接続後、Raspberry Pi側で、次のコマンドでデバイス名を確認します。
 
 //cmd{

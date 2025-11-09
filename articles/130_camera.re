@@ -39,6 +39,9 @@
  * microHDMIと接続可能なHDMIケーブルとモニター
  * 電源アダプタ（USB Type-C、5V/3A以上）
 
+//image[C270][Logicool C270][scale=0.25]
+//image[EMMET_S600][EMMET S600][scale=0.25]
+
 //footnote[raspberry_pi][@<href>{https://www.switch-science.com/products/5680} Raspberry Pi 4 Model B 4GB が初心者向けに使いやすくオススメです。]
 //footnote[web_camera_4k][@<href>{https://amzn.asia/d/8sYe7tf} EMEET 4K Webカメラ]
 //footnote[web_camera_C270][@<href>{https://amzn.asia/d/bam9mhN} Logitech C270 なんの変哲もない一般的なWebカメラ]
