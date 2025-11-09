@@ -181,7 +181,7 @@ Seeeduino LotusはSeeeduino Lotus V1.1とSeeeduino Lotus Cortex M0+ の2種類�
 
 そのため、今回は次の図を参考に配線を行ってください。
 
-//image[sensor_connection][センサー接続図][scale=0.25]
+//image[sensor_connection][センサー接続図][scale=0.75]
 
  * 温度センサー     D3
  * 騒音センサー     A2
@@ -234,7 +234,7 @@ Seeeduino Lotus Cortex M0+ は Arduino 互換機ですが、Arduino Uno とは�
   * 検索欄に「seeed samd」と入力
   * 「Seeed SAMD Boards」が候補に出てきたら「Install」をクリック
 
-//image[board_manager][ボードマネージャ][scale=0.75]
+//image[board_manager][ボードマネージャ][scale=0.5]
 
 これで Seeeduino Cortex M0+ 系のボードパッケージが Arduino IDE に追加されました。
 
@@ -247,7 +247,7 @@ Seeeduino Lotus Cortex M0+ を Micro USB ケーブルで PC に接続します�
 接続が完了すると、Arduino IDE のポートリストに新しいポートが表示されます。
 Windows では「COMx」（x は数字）、macOSやLinuxでは「/dev/cu.usbmodemXXXX」といった形式になります。
 
-//image[port_list][ポートリスト][scale=0.75]
+//image[port_list][ポートリスト][scale=0.5]
 
 ポートが分からなくなった場合は、一度 USB を抜き差しして、新たに現れたポートを選びます。
 
@@ -262,11 +262,11 @@ Windows では「COMx」（x は数字）、macOSやLinuxでは「/dev/cu.usbmod
 
  * @<code>{Select other board and port}を選択
 
-//image[select_other_board_and_port][Select other board and port メニュー][scale=0.75]
+//image[select_other_board_and_port][Select other board and port メニュー][scale=0.5]
 
  * 右側のPORTSからSeeeduino が接続されたポートを選択して「OK」をクリック
 
-//image[select_port][Select port メニュー][scale=0.75]
+//image[select_port][Select port メニュー][scale=0.5]
 
  * 左側のBOARDSからSeeeduino Zero を選択して「OK」をクリック
 
@@ -297,7 +297,7 @@ Windows では「COMx」（x は数字）、macOSやLinuxでは「/dev/cu.usbmod
 同じく左上にある右矢印アイコンが、「アップロード」ボタンです。
 コンパイル作業を行ったのちに、プログラムをボードに書き込みます。
 
-//image[upload_program][Arduino IDEにおけるプログラムの実行方法　　][scale=0.75]
+//image[upload_program][Arduino IDEにおけるプログラムの実行方法][scale=0.75]
 
 それでは実際にアップロードボタンを選択して、プログラムを書き込んでみましょう。
 
@@ -312,15 +312,14 @@ Windows では「COMx」（x は数字）、macOSやLinuxでは「/dev/cu.usbmod
 紹介したセンサーすべてを接続したと想定して、センサーと接続ポートを表にまとめます。
 
 //table[sensor_port][センサー接続ポート（Cortex M0+）]{
-センサー        接続ポート
+センサー	接続ポート
 --------------------------
-温度センサー     D4
-水位センサー     I2C
-照度センサー     I2C
-騒音センサー     A1
-LCDディスプレイ（オプション）  I2C
+温度センサー	D4
+水位センサー	I2C
+照度センサー	I2C
+騒音センサー	A1
+LCDディスプレイ（オプション）	I2C
 //}
-
 
 //image[sensor_connection_diagram][センサー接続図][scale=0.75]
 
@@ -339,7 +338,11 @@ Arduino IDEで新規プロジェクトを作成します。
 
 @<href>{https://github.com/Mutsumix/Seeeduino.git} 
 
-必要なソースコードは@<code>{seeduino-sensor-monitor/seeduino-sensor-monitor.ino}のみです。
+必要なソースコードは
+
+@<code>{seeduino-sensor-monitor/seeduino-sensor-monitor.ino}
+
+のみです。
 
 これをコピーしてArduino IDEに貼り付けます。
 
@@ -399,4 +402,4 @@ Temp: 30.0C | Water: 0% | Sound: 16% | Light: 44 lux
 一度ボードにプログラムが書き込まれると、あとはPCに接続せずに、電力を供給し続けるだけでセンサー値を確認することができます。
 モバイルバッテリーでの駆動も可能なので、一時的に屋外の植物の環境を確認したい場合にも活用ができます。
 
-//image[outdoor_sensor_result][闇夜に妖しく光るLCDディスプレイ][scale=0.5]
+//image[outdoor_sensor_result][闇夜に美しく光るLCDディスプレイ][scale=0.5]

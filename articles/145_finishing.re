@@ -54,6 +54,7 @@ sudo apt install screen
 screenコマンドを終了するには、@<code>{Ctrl+a} → @<code>{k} → @<code>{y} の順にキーを押します。
 
 覚え方
+
  * Ctrl + A = screenのコマンドモード
  * K = Kill（終了）
  * y = Yes（確認）

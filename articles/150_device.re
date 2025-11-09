@@ -38,7 +38,7 @@
 
 ハンダゴテはAmazonで購入した1500円程度のもの@<fn>{handa_gotu}を使っています。
 
-//image[handagote][ハンダゴテ][scale=0.25]
+//image[handagote][ハンダゴテ][scale=0.5]
 
 //footnote[handa_gotu][@<href>{https://amzn.asia/d/4NJzAhm} 温度が見れて便利]
 

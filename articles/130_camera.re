@@ -75,7 +75,7 @@ Google Photos Library APIと認可方式にはOAuth2.0を使用しています�
 
 公式サイトから使用しているOSにあったものをダウンロード：@<href>{https://www.raspberrypi.com/software/}
 
-//image[imager-download][Raspberry Pi Imagerのダウンロード画面][scale=0.75]
+//image[imager-download][Raspberry Pi Imagerのダウンロード画面][scale=0.5]
 
 ==== OSの書き込み
 
@@ -243,7 +243,7 @@ v4l2-ctl --list-devices
 v4l2-ctl -d /dev/video0 --list-formats-ext
 //}
 
-//image[v4l2-ctl_list-devices][v4l2-ctl --list-devicesの実行結果の例][scale=0.75]
+//image[v4l2-ctl_list-devices][v4l2-ctl --list-devicesの実行結果の例][scale=0.5]
 
 このコマンドの実行結果から、カメラの対応解像度とフォーマットを確認できます。
 
@@ -258,7 +258,7 @@ mkdir camera-project
 cd camera-project
 //}
 
-//image[mkdir_camera-project][デスクトップに作業フォルダを作成][scale=0.75]
+//image[mkdir_camera-project][デスクトップに作業フォルダを作成][scale=0.5]
 
 ==== GitHubからプログラムを取得
 
@@ -275,7 +275,7 @@ git clone https://github.com/Mutsumix/google-photo-uploader.git
 cd google-photo-uploader
 //}
 
-//image[git_clone][git cloneの実行結果][scale=0.75]
+//image[git_clone][git cloneの実行結果][scale=0.5]
 
 git cloneはGitHub上のプログラムをダウンロードするコマンドです。実行後、camera-projectフォルダの中にgoogle-photo-uploaderフォルダが作成されます。
 
@@ -396,11 +396,11 @@ C270は固定フォーカスのため、ソフトウェアから調整できま�
  3. 画面上部の「プロジェクトを選択」（または「プロジェクト名」）をクリック
  1. 右上の「新しいプロジェクト」をクリック
 
-//image[gcp_project_create_4][GCPプロジェクトの作成画面4][scale=0.75]
+//image[gcp_project_create_4][GCPプロジェクトの作成画面4][scale=0.5]
 
  1.  プロジェクト名を入力（例: raspi-camera-project）
 
-//image[gcp_project_create_5][GCPプロジェクトの作成画面5][scale=0.75]
+//image[gcp_project_create_5][GCPプロジェクトの作成画面5][scale=0.5]
 
  1. 「作成」をクリック（作成に30秒ほどかかります）
  1. 通知領域の「プロジェクトを選択」から作成したプロジェクトを選択
@@ -417,13 +417,13 @@ GCPでは2025年5月13日から多要素認証（MFA）とも呼ばれる 2 段�
 
  1. 左上のハンバーガーメニュー（三本線）→「APIとサービス」→「ライブラリ」
 
-//image[gcp_project_create_6][APIとサービスの設定メニュー][scale=0.75]
+//image[gcp_project_create_6][APIとサービスの設定メニュー][scale=0.5]
 
  2. 検索窓に「Photos Library API」と入力
  3. 「Photos Library API」を選択
  4. 「有効にする」をクリック
 
-//image[gcp_project_create_7][GCPプロジェクトの作成画面7][scale=0.75]
+//image[gcp_project_create_7][APIとサービスの有効化][scale=0.5]
 
 === OAuth同意画面の設定
 
@@ -440,10 +440,8 @@ OAuthの設定をしていきます。@<fn>{oauth}
  ** 対象：外部
  ** 連絡先情報: 自分のメールアドレスを入力
  * 「保存して次へ」
-//image[gcp_project_create_8][0Auth同意画面の設定画面][scale=0.75]
-//image[gcp_project_create_9][0Auth同意画面の設定画面2][scale=0.75] 
-
-#@# //footnote[external][「外部」を選択しても、後でテストユーザーとして自分だけを追加するため、自分以外は使用できません。]
+//image[gcp_project_create_8][0Auth同意画面の設定画面][scale=0.5]
+//image[gcp_project_create_9][0Auth同意画面の設定画面2][scale=0.5] 
 
 ==== スコープの追加
 
@@ -453,16 +451,16 @@ OAuthの設定をしていきます。@<fn>{oauth}
 
  * 「スコープを追加または削除」をクリック
 
-//image[gcp_project_create_10][スコープの追加画面][scale=0.75]
+//image[gcp_project_create_10][スコープの追加画面][scale=0.5]
 
  * フィルタに「photos」と入力
  * 以下の2つにチェック：
  ** https://www.googleapis.com/auth/photoslibrary
  ** https://www.googleapis.com/auth/photoslibrary.appendonly
 
-//image[gcp_project_create_11][追加するスコープ][scale=0.75]
+//image[gcp_project_create_11][追加するスコープ][scale=0.5]
   * 「更新」→「Save」
-//image[gcp_project_create_12][スコープの保存][scale=0.75]
+//image[gcp_project_create_12][スコープの保存][scale=0.5]
 
 ==== テストユーザーの追加
 
@@ -470,9 +468,9 @@ OAuthの設定をしていきます。@<fn>{oauth}
 今回は自分だけが実行できればいいので、自分だけを追加します。
 
  * 「ADD USERS」をクリック
-//image[gcp_project_create_13][テストユーザーの追加画面][scale=0.75]
+//image[gcp_project_create_13][テストユーザーの追加画面][scale=0.5]
  * 自分のGoogleアカウントのメールアドレスを入力
-//image[gcp_project_create_14][テストユーザーの追加画面2][scale=0.75]
+//image[gcp_project_create_14][テストユーザーの追加画面2][scale=0.5]
  * 「保存」
  * ダッシュボードに戻る
 
@@ -481,19 +479,19 @@ OAuthの設定をしていきます。@<fn>{oauth}
 ここでは、アプリがGoogleと通信するための「鍵」を作成します。先ほど設定した「OAuth同意画面」はユーザーに見せる画面の設定で、こちらは実際の通信に使う認証情報（client_secrets.json）を作成します。
 
  * 左メニュー「認証情報」
-//image[gcp_project_create_15][認証情報の作成メニュー][scale=0.75]
+//image[gcp_project_create_15][認証情報の作成メニュー][scale=0.5]
  * 上部の「＋認証情報を作成」→「OAuthクライアントID」
-//image[gcp_project_create_16][OAuthクライアントIDの作成画面][scale=0.75]
+//image[gcp_project_create_16][OAuthクライアントIDの作成画面][scale=0.5]
  * アプリケーションの種類: 「デスクトップアプリ」を選択
  * 名前: 任意（例: Raspi Camera Client）
-//image[gcp_project_create_17][OAuthクライアントIDの作成画面2][scale=0.75]
+//image[gcp_project_create_17][OAuthクライアントIDの作成画面2][scale=0.5]
  * 「作成」を選択
 
 ==== 認証情報のダウンロード
 
  * 「OAuth 2.0 クライアントID」の一覧に作成した認証情報が表示される
  * 右端の「ダウンロード」アイコン（↓矢印）をクリック
-//image[gcp_project_create_18][認証情報のダウンロード画面][scale=0.75]
+//image[gcp_project_create_18][認証情報のダウンロード画面][scale=0.5]
  * JSONファイルがダウンロードされる（ファイル名はclient_secret_xxxxx.jsonのような形式）
 
 == Raspberry PiからGCPへの認証と撮影画像のアップロード
@@ -521,7 +519,7 @@ nano client_secrets.json
  1. 右クリックで貼り付け
  2. @<code>{Ctrl + O}→@<code>{Enter}（保存）→@<code>{Ctrl + X}（終了）
 
-//image[nano_client_secrets_json][nanoコマンドでclient_secrets.jsonを作成し貼り付け][scale=0.75]
+//image[nano_client_secrets_json][nanoコマンドでclient_secrets.jsonを作成し貼り付け][scale=0.5]
 
 慣れている方はSSHを使用してください。
 うまくできなかった方はUSB経由で`client_secrets.json`というファイル名にして、ラズパイのデスクトップ上の`google-photo-uploader`に保存しましょう。
@@ -542,7 +540,7 @@ python setup_auth.py --test-camera --test-upload
 ターミナルに認証用のURLが表示されます：
 
 
-//image[setup_auth_py][setup_auth.pyの実行結果][scale=0.5]
+//image[setup_auth_py][setup_auth.pyの実行結果][scale=0.75]
 
 //cmd{
 Please visit this URL to authorize this application: https://accounts.google...
@@ -563,10 +561,10 @@ Please visit this URL to authorize this application: https://accounts.google...
  * 一瞬ギョッとしてしまいますが、落ち着いて「続行」をクリック
  * 権限の許可画面で「すべて選択」→「続行」を選択
 
-//image[select_all_permissions][すべて選択して続行][scale=0.75]
+//image[select_all_permissions][すべて選択して続行][scale=0.5]
 
  * 「The authentication flow has completed. You may close this window.」というあり得ないくらい素っ気ない画面が表示されれば成功です。
-//image[authentication_flow_completed][認証成功画面][scale=0.75]
+//image[authentication_flow_completed][認証成功画面][scale=0.5]
 
  * ターミナル上でプログラムが続行されていることを確認してください。
 
@@ -574,7 +572,7 @@ Please visit this URL to authorize this application: https://accounts.google...
 
 認証が成功すると`photo_token.json`という名前でトークンが保存され、次回以降は自動的に認証されます。@<fn>{photo_token_json}
 
-//image[photo_token_json][photo_token.jsonの内容][scale=0.75]
+//image[photo_token_json][photo_token.jsonの内容][scale=0.5]
 
 //footnote[photo_token_json][ただし、テストモードだと、1週間で認証が切れてしまいます。そのため、photo_token.jsonを削除し、再度認証の作業をしなくてはなりませんので注意しましょう。]
 
@@ -610,7 +608,7 @@ INFO: テスト画像を削除しました
 
 ブラウザでGoogleフォト（@<href>{https://photos.google.com/}）を開いて、raspi-cameraアルバムに写真がアップロードされているか確認してください。
 
-//image[google_photos_album][Googleフォトのアルバム画面][scale=0.75]
+//image[google_photos_album][Googleフォトのアルバム画面][scale=0.5]
 
 == 定期実行の設定
 
@@ -705,8 +703,8 @@ python google_photos.py
  * 右上の「＋作成」ボタンをクリックします。
  * 表示されるメニューから「アニメーション」を選択します。
 
-//image[google_photos_album_create_animation_menu][写真を選択し、アニメーションを作成][scale=0.75]
-//image[google_photos_album_create_animation_menu_animation][アニメーション作成中][scale=0.75]
+//image[google_photos_album_create_animation_menu][写真を選択し、アニメーションを作成][scale=0.5]
+//image[google_photos_album_create_animation_menu_animation][アニメーション作成中][scale=0.5]
 
 数秒ほど待つと、選択した画像をもとにアニメーション動画が自動生成されます。@<fn>{google_photos_album_create_animation_menu_animation}
 この動画はGoogleフォト上で再生・共有できるほか、必要に応じてダウンロードして編集ソフトで再加工することも可能です。
@@ -724,4 +722,4 @@ python google_photos.py
 この記事で紹介した、ラズベリーパイに市販のWebカメラを接続してGoogle フォトにアップロードするアイディアは、Udemyで公開されている「ラズベリーパイ（Raspberry Pi）と3Dプリンターで作って学ぶIoT～DIY型IoTキット作成講座～」(@<href>{https://t.co/hYOPOvTUa9}）という講座を大いに参考にさせていただきました。
 講師である佐々木 健介(@kensukesasawood)さんは、他にも農業とITを掛け合わせたユニークな講座を公開していてとても学びが多いです。本章の内容が面白いと感じた方がいましたら、ぜひ本記事のネタ元である講座やその他の講座を視聴することをお勧めいたします。
 
-//image[udemy-sasaki][Udemy講座はこちらから][scale=0.75]
+//image[udemy-sasaki][Udemy講座はこちらから][scale=0.5]
