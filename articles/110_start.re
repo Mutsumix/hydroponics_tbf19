@@ -21,9 +21,9 @@ SwitchBot ハブミニ@<fn>{switchbot_hub_mini}	1つ	公式ネットショップ
 水温計@<fn>{water_temperature_sensor}	2つ	Amazon	¥585
 //}
 
-//image[switchbot_co2_sensor][CO2センサー][scale=0.5]
-//image[switchbot_camera][屋内カメラ][scale=0.5]
-//image[switchbot_hub_mini][ハブミニ][scale=0.5]
+//image[switchbot_co2_sensor][CO2センサー][scale=0.25]
+//image[switchbot_camera][屋内カメラ][scale=0.25]
+//image[switchbot_hub_mini][ハブミニ][scale=0.25]
 
 //footnote[switchbot_co2_sensor][@<href>{https://www.switchbot.jp/products/switchbot-co2-meter} SwitchBot CO2センサー（温湿度計）]
 //footnote[switchbot_indoor_camera][@<href>{https://www.switchbot.jp/products/switchbot-indoor-cam} SwitchBot 屋内カメラ]
@@ -41,7 +41,7 @@ SwitchBot ハブミニ@<fn>{switchbot_hub_mini}	1つ	公式ネットショップ
 スマートホーム機器を取り揃えているメーカーのうち、SwithBotは有名どころでラインナップも豊富なため、ここで紹介した製品が長い期間にわたって調達が可能という点でオススメしています。
 
 ==== 拡張性
-また、@<chap>{120_dashboard} @<title>{120_dashboard} の章で後述しますが、CO2センサー（温湿度計）はAPIを使って、プログラムからセンサーデータを取得できるので、様々な形でのデータ利活用が可能です。
+@<chap>{120_dashboard} @<title>{120_dashboard} の章で後述しますが、CO2センサー（温湿度計）はAPIを使ってプログラムからセンサーデータを取得できるので、様々な形でのデータ利活用が可能です。
 
 ==== 注意点
 気をつけておきたいのが、経験上、SwitchBotの製品は初期不良や故障が割とあります。
@@ -83,12 +83,10 @@ SwtichBotのマニュアルに従ってネット接続の初期設定を行い�
 
 SwitchBotのアプリ上から、温度・湿度・CO2濃度のグラフを確認でき、またカメラの映像から植物の様子や水温計に表示された温度もリアルタイムでわかります。
 
-//image[app_graph][アプリ上でのグラフ表示][scale=0.5]
+//image[app_graph][アプリ上でのグラフ表示][scale=0.25]
 
 //image[camera_view][カメラの映像][scale=0.75]
 
 ハブに接続していれば、外出先からでもリアルタイムのセンサやカメラの情報を得ることができます。
 
-ここまでは、手軽な監視を行う方法について紹介しました。
-
-次章から、徐々に発展的な監視を行なっていきます。
+ここまでは、手軽な監視を行う方法について紹介しました。次章から、徐々に発展的な監視を行なっていきます。
