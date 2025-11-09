@@ -95,12 +95,12 @@ Google Photos Library APIと認可方式にはOAuth2.0を使用しています�
  * ユーザー名: pi（任意ですが、以降の手順ではpiを前提にしています）
  * パスワード: 任意（忘れないように必ず記録しておきましょう）
  * Wi-Fi設定:@<fn>{wifi_setting}
-    ** SSID: 自宅のWi-Fi名
-    ** パスワード: Wi-Fiのパスワード
-    ** 国: JP
+ ** SSID: 自宅のWi-Fi名
+ ** パスワード: Wi-Fiのパスワード
+ ** 国: JP
  * ロケール設定:
-    ** タイムゾーン: Asia/Tokyo
-    ** キーボードレイアウト: jp
+ ** タイムゾーン: Asia/Tokyo
+ ** キーボードレイアウト: jp
 
 //footnote[wifi_setting][Wi-Fi設定をここで行うと、初回起動時から自動接続されます。モニターとキーボードだけで作業したい場合はここで設定しておくと便利です。]
 
@@ -152,7 +152,7 @@ Google Photos Library APIと認可方式にはOAuth2.0を使用しています�
 操作したいPC側にVNC Viewerをインストールします。
 
  * @<href>{https://www.realvnc.com/en/connect/download/viewer/}からダウンロードしてインストール
- * インストール後、先ほどメモしたIPアドレスを入力して接続
+ * インストール後、Raspberry PiのIPアドレスを入力して接続
  * ユーザー名とパスワードでログイン
 
 VNC Viewerを使うと、操作用PCからコピー＆ペーストができるため、長いコマンドやJSONファイルの転送が楽になります。
@@ -166,7 +166,7 @@ VNC Viewerを使うと、操作用PCからコピー＆ペーストができる�
 
 //cmd{
 ssh pi@192.168.1.10
-# IPアドレスは後ほど確認するものに置き換えてください
+# IPアドレスはご自身のRaspberry Piのものに置き換えてください
 //}
 
 パスワードを入力してログインします。
@@ -175,7 +175,7 @@ ssh pi@192.168.1.10
 
 VNC Serverを有効化すると、画面右上にVNCアイコンが表示されます。
 このアイコンをクリックすると、Raspberry PiのIPアドレスが表示されます。
-このアドレスをメモしておいてください。後で操作用PCからVNC接続やSSH接続に使用します。
+このアドレスをメモしておいてください。操作用PCからVNC接続やSSH接続に使用できます。
 
 //image[ip_address][IPアドレスの確認][scale=0.75]
 
@@ -186,7 +186,7 @@ VNC Serverを有効化すると、画面右上にVNCアイコンが表示され�
 hostname -I
 //}
 
-表示されたIPアドレス@<fn>{ip_address}（例: 192.168.1.10）をメモしておいてください。後でVNC接続やSSH接続に使用します。
+表示されたIPアドレス@<fn>{ip_address}（例: 192.168.1.10）をメモしておいてください。VNC接続やSSH接続に使用します。
 
 //footnote[ip_address][IPアドレスは、ネットワーク上でRaspberry Piを識別するための番号です。]
 
@@ -243,10 +243,6 @@ v4l2-ctl -d /dev/video0 --list-formats-ext
 //image[v4l2-ctl_list-devices][v4l2-ctl --list-devicesの実行結果の例][scale=0.75]
 
 このコマンドの実行結果から、カメラの対応解像度とフォーマットを確認できます。
- * Logicool C270: MJPG 1280x960が最大
- * EMEET S600: MJPG 3840x2160が最大
-
-#@# === 作業フォルダの準備とプログラムの取得
 
 ==== デスクトップに作業フォルダを作成
 
@@ -376,7 +372,7 @@ cap.set(cv2.CAP_PROP_BRIGHTNESS, 128)  # デフォルトは128、暗い場合は
 @<b>{C270でピントが合わない場合：}
 
 C270は固定フォーカスのため、ソフトウェアから調整できません。
-カメラを分解してレンズのフォーカスリングを物理的に調整する必要があります。
+カメラを分解してレンズのフォーカスリングを物理的に調整する必要があります（自己責任で行なってください）。
 
 == クラウド側（Google Cloud Platform）の設定
 
@@ -385,14 +381,14 @@ C270は固定フォーカスのため、ソフトウェアから調整できま�
 
 === GCPプロジェクトの作成
 
- 1. 操作用PCのブラウザで @<href>{https://console.cloud.google.com/, Google Cloud Console} にアクセス
+ 1. 操作用PCのブラウザでGoogle Cloud Console @<href>{https://console.cloud.google.com/, https://console.cloud.google.com} にアクセス
 
-//image[gcp_project_create][GCPプロジェクトの作成画面][scale=0.75]
+//image[gcp_project_create][GCPプロジェクトの作成画面][scale=0.5]
 
  2. Googleアカウントでログイン（初回は利用規約に同意）
 
-//image[gcp_project_create_2][GCPプロジェクトの作成画面2][scale=0.75]
-//image[gcp_project_create_3][GCPプロジェクトの作成画面3][scale=0.75]
+//image[gcp_project_create_2][GCPプロジェクトの作成画面2][scale=0.5]
+//image[gcp_project_create_3][GCPプロジェクトの作成画面3][scale=0.5]
 
  3. 画面上部の「プロジェクトを選択」（または「プロジェクト名」）をクリック
  1. 右上の「新しいプロジェクト」をクリック
@@ -407,6 +403,7 @@ C270は固定フォーカスのため、ソフトウェアから調整できま�
  1. 通知領域の「プロジェクトを選択」から作成したプロジェクトを選択
 
 GCPアカウントがGoogleから割り当てられた「家」だとすると、GCPプロジェクトは、Googleのクラウドサービスを利用するための「部屋」のようなものです。一つのプロジェクトで複数のAPI（例えるなら「家具」）を管理できます。
+
 GCPでは2025年5月13日から多要素認証（MFA）とも呼ばれる 2 段階認証プロセス（2SV）の適用を開始しました。Googleアカウントのセキュリティ設定に移動して、2 段階認証プロセスを有効にしてください。
 
 === Photos Library APIの有効化
@@ -417,7 +414,7 @@ GCPでは2025年5月13日から多要素認証（MFA）とも呼ばれる 2 段�
 
  1. 左上のハンバーガーメニュー（三本線）→「APIとサービス」→「ライブラリ」
 
-//image[gcp_project_create_6][GCPプロジェクトの作成画面6][scale=0.75]
+//image[gcp_project_create_6][APIとサービスの設定メニュー][scale=0.75]
 
  2. 検索窓に「Photos Library API」と入力
  3. 「Photos Library API」を選択
@@ -440,8 +437,8 @@ OAuthの設定をしていきます。@<fn>{oauth}
  ** 対象：外部
  ** 連絡先情報: 自分のメールアドレスを入力
  * 「保存して次へ」
-//image[gcp_project_create_8][GCPプロジェクトの作成画面8][scale=0.75]
-//image[gcp_project_create_9][GCPプロジェクトの作成画面9][scale=0.75] 
+//image[gcp_project_create_8][0Auth同意画面の設定画面][scale=0.75]
+//image[gcp_project_create_9][0Auth同意画面の設定画面2][scale=0.75] 
 
 #@# //footnote[external][「外部」を選択しても、後でテストユーザーとして自分だけを追加するため、自分以外は使用できません。]
 
@@ -453,16 +450,16 @@ OAuthの設定をしていきます。@<fn>{oauth}
 
  * 「スコープを追加または削除」をクリック
 
-//image[gcp_project_create_10][GCPプロジェクトの作成画面10][scale=0.75]
+//image[gcp_project_create_10][スコープの追加画面][scale=0.75]
 
  * フィルタに「photos」と入力
  * 以下の2つにチェック：
  ** https://www.googleapis.com/auth/photoslibrary
  ** https://www.googleapis.com/auth/photoslibrary.appendonly
 
-//image[gcp_project_create_11][GCPプロジェクトの作成画面11][scale=0.75]
+//image[gcp_project_create_11][追加するスコープ][scale=0.75]
   * 「更新」→「Save」
-//image[gcp_project_create_12][GCPプロジェクトの作成画面12][scale=0.75]
+//image[gcp_project_create_12][スコープの保存][scale=0.75]
 
 ==== テストユーザーの追加
 
@@ -470,9 +467,9 @@ OAuthの設定をしていきます。@<fn>{oauth}
 今回は自分だけが実行できればいいので、自分だけを追加します。
 
  * 「ADD USERS」をクリック
-//image[gcp_project_create_13][GCPプロジェクトの作成画面13][scale=0.75]
+//image[gcp_project_create_13][テストユーザーの追加画面][scale=0.75]
  * 自分のGoogleアカウントのメールアドレスを入力
-//image[gcp_project_create_14][GCPプロジェクトの作成画面14][scale=0.75]
+//image[gcp_project_create_14][テストユーザーの追加画面2][scale=0.75]
  * 「保存」
  * ダッシュボードに戻る
 
@@ -481,19 +478,19 @@ OAuthの設定をしていきます。@<fn>{oauth}
 ここでは、アプリがGoogleと通信するための「鍵」を作成します。先ほど設定した「OAuth同意画面」はユーザーに見せる画面の設定で、こちらは実際の通信に使う認証情報（client_secrets.json）を作成します。
 
  * 左メニュー「認証情報」
-//image[gcp_project_create_15][GCPプロジェクトの作成画面15][scale=0.75]
+//image[gcp_project_create_15][認証情報の作成メニュー][scale=0.75]
  * 上部の「＋認証情報を作成」→「OAuthクライアントID」
-//image[gcp_project_create_16][GCPプロジェクトの作成画面16][scale=0.75]
+//image[gcp_project_create_16][OAuthクライアントIDの作成画面][scale=0.75]
  * アプリケーションの種類: 「デスクトップアプリ」を選択
  * 名前: 任意（例: Raspi Camera Client）
-//image[gcp_project_create_17][GCPプロジェクトの作成画面17][scale=0.75]
+//image[gcp_project_create_17][OAuthクライアントIDの作成画面2][scale=0.75]
  * 「作成」を選択
 
 ==== 認証情報のダウンロード
 
  * 「OAuth 2.0 クライアントID」の一覧に作成した認証情報が表示される
  * 右端の「ダウンロード」アイコン（↓矢印）をクリック
-//image[gcp_project_create_18][GCPプロジェクトの作成画面18][scale=0.75]
+//image[gcp_project_create_18][認証情報のダウンロード画面][scale=0.75]
  * JSONファイルがダウンロードされる（ファイル名はclient_secret_xxxxx.jsonのような形式）
 
 == Raspberry PiからGCPへの認証と撮影画像のアップロード
@@ -507,7 +504,9 @@ VNC Viewerを使った方法で解説します。
  1. VNC ViewerでRaspberry Piに接続
  2. 操作用PCでダウンロードしたJSONファイルの内容をテキストエディタで開く
  3. 全選択してコピー
- 4. Raspberry Pi側でターミナルを開き、次のコマンドを実行
+ 4. Raspberry Pi側でターミナルを開き、次のコマンドを実行@<fn>{nano}
+
+//footnote[nano][nanoコマンドではなく、右クリックからclient_secrets.jsonファイルを新規作成し、貼り付ける方法でも構いません。]
 
 //cmd{
 cd ~/Desktop/camera-project/google-photo-uploader
@@ -540,7 +539,7 @@ python setup_auth.py --test-camera --test-upload
 ターミナルに認証用のURLが表示されます：
 
 
-//image[setup_auth_py][setup_auth.pyの実行結果][scale=0.75]
+//image[setup_auth_py][setup_auth.pyの実行結果][scale=0.5]
 
 //cmd{
 Please visit this URL to authorize this application: https://accounts.google...
@@ -548,13 +547,13 @@ Please visit this URL to authorize this application: https://accounts.google...
 
  * このURLをコピー（VNC Viewerならマウスでドラッグして右クリック→URLをコピー→ブラウザに貼り付け、もしくはOpen URL）
 
-//image[open_url][API認証用のURLが表示される][scale=0.75]
+//image[open_url][API認証用のURLが表示される][scale=0.5]
 
  * ブラウザで開く（Raspberry Pi上またはVNC接続元のPC）
  * Googleアカウントでログイン
-//image[login_google_account][Googleアカウントでログイン][scale=0.75]
+//image[login_google_account][Googleアカウントでログイン][scale=0.5]
  * 「このアプリはGoogleで確認されていません」という警告が表示されます@<fn>{oauth_warning}
-//image[oauth_warning][OAuth警告画面][scale=0.75]
+//image[oauth_warning][OAuth警告画面][scale=0.5]
 
 //footnote[oauth_warning][なぜこの警告が出るのかというと、Googleの審査を受けていない個人開発アプリだからです。審査は申請に時間がかかります。商用アプリでなければ審査をせずにテストモードとして使用し続けることも可能です。]
 
@@ -569,9 +568,6 @@ Please visit this URL to authorize this application: https://accounts.google...
  * ターミナル上でプログラムが続行されていることを確認してください。
 
 //image[terminal_running][プログラムが続行され完了した画面][scale=0.75]
-
-#@#  * 認証コードが表示されるのでコピー
-#@#  * ターミナルに戻って貼り付け→`Enter`
 
 認証が成功すると`photo_token.json`という名前でトークンが保存され、次回以降は自動的に認証されます。@<fn>{photo_token_json}
 
@@ -619,7 +615,7 @@ INFO: テスト画像を削除しました
 
 //emlist[config.yml]{
 scheduler:
-  day_of_week: ["monday", "tuesday", "wednesday", "thursday", "friday"]  # 月〜金のみ
+  day_of_week: ["monday", "tuesday", "wednesday", "thursday", "friday"]  # 月〜金の場合
   at_time: ["06:00:00", "12:00:00", "18:00:00"]        # 毎日6時、12時、18時に撮影
 //}
 
@@ -714,7 +710,7 @@ python google_photos.py
 
 
 連日撮影した植物の成長をこうして動画にまとめると、成長の経緯が一目でわかります。@<fn>{google_photos_album_create_animation_menu_animation}
-純粋に見ていて楽しいですし、「葉が大きく成長するタイミング」や「日照時間や温度・湿度による葉の動きの違い」など連続的な成長の様子から多くの気づきが得られるのではないでしょうか。
+純粋に見ていて楽しいですし、植物のコンテナ毎に生育条件を分けていれば、「葉が大きく成長するタイミング」や「日照時間や温度・湿度による葉の動きの違い」など連続的な成長の様子から多くの気づきが得られるのではないでしょうか。
 
 ラズベリーパイとGoogleフォトの連携により、手間をかけずにタイムラプス動画を作成することができました。
 
